@@ -1,0 +1,4 @@
+Use this to install flask via pip3
+
+sudo -H pip3 install flask
+

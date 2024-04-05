@@ -1,5 +1,5 @@
 import Dropdown from 'react-bootstrap/Dropdown';
-import { fetchPlayersList } from '../../store/utils/thunk';
+import { fetchPlayersList  } from '../../store/utils/thunk';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 
