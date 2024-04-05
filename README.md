@@ -1,3 +1,10 @@
+Run web app:
+- npm run dev
+
+Flask server for debugging:
+- python3 flask-server/server.py
+
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
