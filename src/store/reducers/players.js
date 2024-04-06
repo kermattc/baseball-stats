@@ -14,9 +14,7 @@ export const playersSlice = createSlice({
             console.log("fetchPlayers pending")
         })
         .addCase(fetchPlayersList.fulfilled, (state, action) => {
-            // state.loading = false;
-            console.log('fetchPlayers fulfilled')
-            state.playersList = action.payload;
+            state.playersList = action.payload
             state.loading = false;
 
             console.log('state.players: ', state.playersList)
