@@ -17,6 +17,7 @@ export const playersSlice = createSlice({
             state.playersList = action.payload
             state.loading = false;
 
+            console.log("fetch players fulfilled")
             console.log('state.players: ', state.playersList)
         })
         .addCase(fetchPlayersList.rejected, (state) => {

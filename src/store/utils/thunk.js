@@ -18,7 +18,7 @@ import axios from 'axios';
 
 
 // export const fetchPlayersList = createAsyncThunk(
-//     'home/fetchPlayers',
+//     'players/fetchPlayers',
 //     async() => {
 //         try {
 //             const response = await axios.request(getPlayersList)
@@ -27,6 +27,28 @@ import axios from 'axios';
 //             return response.data
 //         } catch (error) {
 //             throw error;
+//         }
+//     }
+// )
+
+// // get player ID from frontend and pass it into the API call
+// export const fetchPlayerStats = createAsyncThunk(
+//     'player/fetchPlayerStats',
+//     async(selectedPlayerID, thunkAPI) => {
+//         try {
+//             const getPlayerStats = {
+//                 method: 'GET',
+//                 url: option.url + '/getMLBGamesForPlayer',
+//                 params: {playerID: selectedPlayerID},
+//                 headers: {
+//                     'X-RapidAPI-Key': '01637a011cmshbae963a49297aa1p15a0e8jsn6bd4b4d392dd',
+//                     'X-RapidAPI-Host': 'tank01-mlb-live-in-game-real-time-statistics.p.rapidapi.com'
+//                   }
+//             }
+//             const response = await axios.request(getPlayerStats)
+//             console.log(response.data);
+//         } catch (error) {
+//             console.error(error)
 //         }
 //     }
 // )
@@ -41,7 +63,7 @@ const URL_SERV = 'http://127.0.0.1:5000/'   // for debugging
 const getPlayersList = URL_SERV + 'player-list'
 
 export const fetchPlayersList = createAsyncThunk(
-    'home/fetchPlayers',
+    'players/fetchPlayers',
     async() => {
         try {
             const response = await axios.request(getPlayersList)
@@ -50,6 +72,19 @@ export const fetchPlayersList = createAsyncThunk(
             return response.data
         } catch (error) {
             throw error;
+        }
+    }
+)
+
+const getPlayerStats = URL_SERV + 'player-stats'
+export const fetchPlayerStats = createAsyncThunk(
+    'playerStats/fetchPlayerStats',
+    async() => {
+        try {
+            const response = await axios.request(getPlayerStats)
+            return response.data
+        } catch (error) {
+            console.error(error)
         }
     }
 )
