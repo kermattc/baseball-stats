@@ -36,6 +36,7 @@ import axios from 'axios';
 //     'player/fetchPlayerStats',
 //     async(selectedPlayerID, thunkAPI) => {
 //         try {
+//             console.log("from fetch player stats thunk - selected player ID: ", selectedPlayerID)
 //             const getPlayerStats = {
 //                 method: 'GET',
 //                 url: option.url + '/getMLBGamesForPlayer',
@@ -46,7 +47,8 @@ import axios from 'axios';
 //                   }
 //             }
 //             const response = await axios.request(getPlayerStats)
-//             console.log(response.data);
+//             return response.data
+//             // console.log('from thunk. response: ', response.data);
 //         } catch (error) {
 //             console.error(error)
 //         }
