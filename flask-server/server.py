@@ -1,15 +1,16 @@
 import os
 from flask import Flask, json, jsonify
-# from flask_cors import CORS
+from flask_cors import CORS, cross_origin
+app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 player_list_path = os.path.join(os.path.dirname(__file__), 'player-list.json')
 player_stats_path = os.path.join(os.path.dirname(__file__), 'hitter-stats.json')
 # player_stats_path = os.path.join(os.path.dirname(__file__), 'pitcher-stats.json')
 
-app = Flask(__name__)
-# CORS(app)
-
 @app.route('/player-list', methods=["GET"])
+# @cross_origin()
 def send_player_list_json():
     with open(player_list_path, 'r') as file:
         data = json.load(file)
