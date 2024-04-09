@@ -21,6 +21,7 @@ const PlayerGames = ( {playerID, getPlayerStats, onGameSelect} ) => {
     }
 
     const handleSelectedGame = (item) => {
+        console.log("Selected game: ", item)
         onGameSelect(item)
     }
 

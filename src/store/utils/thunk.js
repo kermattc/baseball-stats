@@ -78,7 +78,8 @@ export const fetchPlayersList = createAsyncThunk(
     }
 )
 
-const getPlayerStats = URL_SERV + 'player-stats'
+const getPlayerStats = URL_SERV + 'hitter-stats'
+// const getPlayerStats = URL_SERV + 'pitcher-stats'
 export const fetchPlayerStats = createAsyncThunk(
     'playerStats/fetchPlayerStats',
     async() => {

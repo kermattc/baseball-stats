@@ -26,7 +26,7 @@ const Home = () => {
 
     return (
         <>
-            {/* {console.log("selected games: ", selectedGames)} */}
+            {console.log("selected games: ", selectedGames)}
             <PlayersList onPlayerSelect={handlePlayerSelect}/>
             <PlayerGames playerID={selectedPlayerID} getPlayerStats={populatePlayerStats} onGameSelect={handleSelectedGames}/>
             <PlayerCard playerGames={selectedGames} playerStats={playerStats}/>

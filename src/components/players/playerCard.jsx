@@ -2,41 +2,41 @@
     Get the selected games and display the game details from the player stats object
 */
 
-import { useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
+import PlayerStatsCard from './playerStatsCard'
 
 const PlayerCard = ( { playerGames, playerStats } ) => {
 
     const [gameStats, setGameStats] = useState([])
 
     useEffect(() => {
-        
-        // setGameStats([
-        //     playerStats.
-        // ])
-        setGameStats( prevGameStats => [
-            ...prevGameStats,
-            playerStats[playerGames]
-        ])
-        // console.log("Current game stats: ", playerStats[playerGames])
-
-
+        console.log("Player games: ", playerGames)
+        if (playerGames.length > 0) {
+            setGameStats( prevGameStats => [
+                ...prevGameStats,
+                playerStats[playerGames[playerGames.length - 1]]
+            ])
+        }
     }, [playerGames])
+    
 
     return (
         <>
-            {/* {console.log("Received player stats: ", playerStats)}
-            {console.log("From playerCard.jsx - player games: ", playerGames)} */}
 
-            {console.log('Selected player game stats: ', gameStats)}
+            {console.log('Selected player game stats: ', gameStats)} 
             {playerGames.length != 0 && playerStats.length != 0 ? (
                 <>
-                    Player card for game stats begins here
+                    <div>
+                        Player card for game stats begins here
+                    </div>
                     <h2/>
-                    Games: { playerGames }
+                    {gameStats.map((playerGameStats, gameNumber) => (
+                        // console.log("Key: ", key, " value: ", value)
+                        // console.log("id: ", gameNumber)
+                        <PlayerStatsCard key={"game"+gameNumber} playerGameStats={playerGameStats}/>
+                    ))}
                 </>
             ): null }
-
         </>
     )
 }
