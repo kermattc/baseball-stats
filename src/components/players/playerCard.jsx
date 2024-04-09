@@ -3,24 +3,32 @@
 */
 
 import { useDispatch } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const PlayerCard = ( { playerGames, playerStats } ) => {
 
+    const [gameStats, setGameStats] = useState([])
 
     useEffect(() => {
-        console.log("New game added")
-        console.log(playerGames)
-        // if (playerGames && playerStats) {
-        //     console.log("A player and a game has been selected.")
-        //     console.log("Player games: ", playerGames)
-        //     console.log("Player stats: ", playerStats)
-        // }
+        
+        // setGameStats([
+        //     playerStats.
+        // ])
+        setGameStats( prevGameStats => [
+            ...prevGameStats,
+            playerStats[playerGames]
+        ])
+        // console.log("Current game stats: ", playerStats[playerGames])
+
+
     }, [playerGames])
 
     return (
         <>
-            {console.log("From playerCard.jsx - player games: ", playerGames)}
+            {/* {console.log("Received player stats: ", playerStats)}
+            {console.log("From playerCard.jsx - player games: ", playerGames)} */}
+
+            {console.log('Selected player game stats: ', gameStats)}
             {playerGames.length != 0 && playerStats.length != 0 ? (
                 <>
                     Player card for game stats begins here
