@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 
 const PlayerStatsCard = ( { playerGameStats } ) => {
+    console.log("asdf: ", playerGameStats)
 
     const gameID = playerGameStats.gameID
     const year = gameID.substring(0,4); 
@@ -15,6 +16,7 @@ const PlayerStatsCard = ( { playerGameStats } ) => {
     const gameName = match + ' on '+year+'/'+month+'/'+date 
 
     const startingPosition = playerGameStats.startingPosition
+    
 
     const renderStats = (position) => {
         switch(position) {
