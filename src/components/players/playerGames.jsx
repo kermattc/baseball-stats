@@ -8,22 +8,35 @@ import { fetchPlayerStats } from '../../store/utils/thunk';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
+import ToggleButton from 'react-bootstrap/ToggleButton';
+
 
 const PlayerGames = ( {playerID, getPlayerStats, onGameSelect} ) => {
     const dispatch = useDispatch();
     const playerStats = useSelector(state => state.playerStats)
 
     const [playerGames, setPlayerGames] = useState([]);
-    // const [allPlayerStats, setAllPlayerStats] = useState([]);
 
     const handleAllPlayerStats = (playerStatsObj) => {
         getPlayerStats(playerStatsObj)
     }
 
+    const [checkedGames, setCheckedGames] = useState({});
+
+    // toggles the states for the respective gameID button
+    const handleToggle = (gameID) => {
+        setCheckedGames(prevState => ({
+            ...prevState,
+            [gameID]: !prevState[gameID]
+        }));
+        handleSelectedGame(gameID);
+    }
+
+    // pass the selected game as prop to playerCard component
     const handleSelectedGame = (item) => {
-        console.log("Selected game: ", item)
         onGameSelect(item)
     }
+
 
     useEffect(() => {
         if (playerID) {
@@ -38,7 +51,7 @@ const PlayerGames = ( {playerID, getPlayerStats, onGameSelect} ) => {
                     handleAllPlayerStats(playerStats)
 
                     const temp = Object.keys(playerStats)
-                    console.log("Player games: ", playerGames)
+                    // console.log("Player games: ", playerGames)
                     const gameDetails = temp.map(game => {
                         const year = game.substring(0,4); 
                         const month = game.substring(4,6);
@@ -48,25 +61,36 @@ const PlayerGames = ( {playerID, getPlayerStats, onGameSelect} ) => {
                         return ({gameID: game, gameLabel: match + ' on '+year+'/'+month+'/'+date})
                     })
 
-                    console.log('debug: ', gameDetails)
-                    setPlayerGames(gameDetails.map((game) => 
-                        <li key={game.gameID}>{game.gameLabel}
-                            <Button onClick={() => handleSelectedGame(game.gameID)}></Button>
-                        </li>
-                    ))
+                    // set player games and set all the buttons to view details to false
+                    setPlayerGames(gameDetails)
+                    setCheckedGames(gameDetails.map(game => [game.gameID, false]));
+
                 }
             })
         }
-        console.log("made it here")
     }, [playerID])
-
 
     return (
         <>
             {!playerStats.loading ? (  
                 <>
                     <h3>Select a game to view this player's stats</h3>
-                    <ul>{playerGames}</ul> 
+                    <ul>{playerGames.map((game) => (
+                        <li key={game.gameID}> {game.gameLabel}
+                        
+                        <ToggleButton
+                            className="mb-2"
+                            id={"toggle-check"+game.gameID}
+                            type="checkbox"
+                            variant="outline-primary"
+                            checked={checkedGames[game.gameID]}
+                            onChange={() => handleToggle(game.gameID)}
+                        >
+                            View
+                        </ToggleButton>
+                         </li>
+                        ))}
+                    </ul> 
                 </>
             ) : null}
         </>
@@ -74,3 +98,4 @@ const PlayerGames = ( {playerID, getPlayerStats, onGameSelect} ) => {
 }
 
 export default PlayerGames;
+

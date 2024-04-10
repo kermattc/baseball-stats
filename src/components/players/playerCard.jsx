@@ -10,20 +10,32 @@ const PlayerCard = ( { playerGames, playerStats } ) => {
     const [gameStats, setGameStats] = useState([])
 
     useEffect(() => {
-        console.log("Player games: ", playerGames)
         if (playerGames.length > 0) {
+            const latestGame = playerGames[playerGames.length-1]
+            console.log("Latest game: ", latestGame)
+            for (var i = 0 ; i < playerGames.length-1; i++) {
+                if (playerGames[i] === latestGame) {
+                    console.log("Duplicate found. i: ", i)
+                    var temp = playerGames.splice(i, 1)
+                    temp = playerGames.splice(playerGames.length-1, 1)
+
+                    console.log("After removing duplicate: ", temp)
+                }
+            }
+
+
             setGameStats( prevGameStats => [
                 ...prevGameStats,
                 playerStats[playerGames[playerGames.length - 1]]
             ])
         }
     }, [playerGames])
-    
+
 
     return (
         <>
-
-            {console.log('Selected player game stats: ', gameStats)} 
+            {/* {console.log('Selected player game stats: ', gameStats)}  */}
+            {console.log("Player games: ", playerGames)}
             {playerGames.length != 0 && playerStats.length != 0 ? (
                 <>
                     <div>
