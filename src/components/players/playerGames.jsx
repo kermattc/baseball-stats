@@ -44,10 +44,10 @@ const PlayerGames = ( {playerID, getPlayerStats, onGameSelect} ) => {
             // dispatch(fetchPlayerStats())    // temporary fetching shohei ohtani stats. Later it'll be used for any player id 
             .then((response) => {
                 if (response.payload) {
-                    console.log("response: ", response)
+                    // console.log("response: ", response)
                     const playerStats = response.payload.body;
 
-                    console.log("Need to pass this to playerCard.jsx: ", playerStats)
+                    // console.log("Need to pass this to playerCard.jsx: ", playerStats)
                     handleAllPlayerStats(playerStats)
 
                     const temp = Object.keys(playerStats)

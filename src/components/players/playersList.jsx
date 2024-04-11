@@ -21,8 +21,8 @@ const PlayersList = ({ onPlayerSelect }) => {
 
     const handleSelectedPlayer = (option) => {
         setSelectedOption(option);
-        console.log(`Option selected:`, option);
-        console.log("Player id: ", option.value.playerID)
+        // console.log(`Option selected:`, option);
+        // console.log("Player id: ", option.value.playerID)
         onPlayerSelect(option.value.playerID)
     };
 
@@ -58,23 +58,3 @@ const PlayersList = ({ onPlayerSelect }) => {
 }
 
 export default PlayersList;
-
-                {/* <Dropdown>
-                    <Dropdown.Toggle variant="Primary" id="dropdown-basic">
-                        Select Player
-                    </Dropdown.Toggle>
-
-                    <Dropdown.Menu>
-                        {players.loading ? (
-                            <Dropdown.Item disabled>Loading...</Dropdown.Item>
-                        ) : 
-                        (
-                            playersList.map(item => (
-                                <Dropdown.Item key={item.playerID}>{item.longName}</Dropdown.Item>
-                            ))
-                            // players.playersList.body.map(item => (
-                            //     <Dropdown.Item key={item.playerID}>{item.longName}</Dropdown.Item>
-                            // ))
-                        )}
-                    </Dropdown.Menu>
-                </Dropdown> */}

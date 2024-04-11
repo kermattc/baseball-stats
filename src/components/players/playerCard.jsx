@@ -9,46 +9,63 @@ const PlayerCard = ( { playerGames, playerStats, gameToRemove } ) => {
 
     const [gameStats, setGameStats] = useState([])
 
+    // useEffect(() => {
+    //     if (playerGames.length > 0) {
+    //         setGameStats( prevGameStats => [
+    //             ...prevGameStats,
+    //             playerStats[playerGames[playerGames.length-1]]
+    //         ])
+    //     }
+    // }, [playerGames])
+
+    // thanks chatgpt
     useEffect(() => {
         if (playerGames.length > 0) {
-            setGameStats( prevGameStats => [
-                ...prevGameStats,
-                playerStats[playerGames[playerGames.length-1]]
-            ])
+            const latestGameStat = playerStats[playerGames[playerGames.length - 1]];
+            
+            setGameStats(prevGameStats => {
+                // Check if the latest game is already present in gameStats
+                const gameExists = prevGameStats.some(gameStat => gameStat.gameID === latestGameStat.gameID);
+    
+                if (gameExists) {
+                    // If the latest game is already present, filter it out
+                    return prevGameStats.filter(gameStat => gameStat.gameID !== latestGameStat.gameID);
+                } else {
+                    // If the latest game is not present, add it
+                    return [...prevGameStats, latestGameStat];
+                }
+            });
         }
-    }, [playerGames])
-
+    }, [playerGames, playerStats]);
+    
 
     useEffect(() => {
         console.log("Need to remove this game: ", gameToRemove)
         // using the gameToRemove (ie: 20240320_LAD@SD), find the value in the gameStats object and remove the game(s) that contains that value
-        // setGameStats()
+
+        var newGameStats = gameStats.filter((item) => {
+            return item.gameID !== gameToRemove
+        })
+
+        console.log("new game stats: ", newGameStats)
+
+        setGameStats(newGameStats)
+        // setGameStats(prevGameStats => prevGameStats.filter(item => item.gameID !== gameToRemove));
+
+
     }, [gameToRemove])
 
 
     return (
         <>
-            {/* {console.log("From playerCard - playerGames: ", playerGames)} */}
-            {console.log("From playerCard - gameStats: ", gameStats)}
-            {/* {console.log("From playerCard - Any games to remove? ", gameToRemove)} */}
-
-            {/* {gameToRemove? removeDuplicateGames(gameToRemove) : null} */}
-            {/* {console.log('Selected player game stats: ', gameStats)} 
-            {console.log("From playerCard - playerGames: ", playerGames)}
-            {console.log("From playerCard - playerStats: ", playerStats)}
-
-            {console.log("stats using player games as key: ", playerStats[playerGames[playerGames.length-1]])} */}
-
             {playerGames.length != 0 && playerStats.length != 0 ? (
                 <>
                     <div>
                         Player card for game stats begins here
                     </div>
                     <h2/>
-                    {console.log("Game stats: ", gameStats)}
+                    {console.log("Rendering game stats: ", gameStats)}
                     {gameStats.map((playerGameStats, gameNumber) => (
-                        // console.log("Key: ", key, " value: ", value)
-                        // console.log("id: ", gameNumber)
                         <PlayerStatsCard key={"game"+gameNumber} playerGameStats={playerGameStats}/>
                     ))}
                 </>

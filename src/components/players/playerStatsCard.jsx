@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 
 const PlayerStatsCard = ( { playerGameStats } ) => {
-    console.log("asdf: ", playerGameStats)
+    // console.log("asdf: ", playerGameStats)
 
     const gameID = playerGameStats.gameID
     const year = gameID.substring(0,4); 
@@ -125,7 +125,7 @@ const PlayerStatsCard = ( { playerGameStats } ) => {
 
     return (
         <>
-            {console.log('from player card: ', playerGameStats)}
+            {/* {console.log('from player card: ', playerGameStats)} */}
             <h2> Game: {gameName} </h2>
             <div> Image of player here </div>
 

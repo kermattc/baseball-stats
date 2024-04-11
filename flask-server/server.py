@@ -1,4 +1,6 @@
 import os
+import sys
+print(sys.path)
 from flask import Flask, json, jsonify
 from flask_cors import CORS, cross_origin
 app = Flask(__name__)
