@@ -4,6 +4,7 @@
 
 import { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
+import Card from 'react-bootstrap/Card';
 
 const PlayerStatsCard = ( { playerGameStats } ) => {
     // console.log("asdf: ", playerGameStats)
@@ -32,6 +33,7 @@ const PlayerStatsCard = ( { playerGameStats } ) => {
                 return (
                     <>
                         {playerGameStats.started ? <div>Starting Pitcher</div> : <div>Relief Pitcher</div>}
+                        <h5>Pitching</h5>
                         <div>ERA: {pitchingStats['ERA']}</div>
                         <div>ER: {pitchingStats['ER']}</div>
                         <div>R: {pitchingStats['R']}</div>
@@ -45,6 +47,7 @@ const PlayerStatsCard = ( { playerGameStats } ) => {
                         <Button onClick={toggleAdditionalPitchingStats}>More stats</Button>
                             {isPitchingVisible && 
                                 <>
+                                    <h5>Additional Pitching Stats</h5>
                                     <div>Strikes: {pitchingStats['Strikes']}</div>
                                     <div>Batters Faced: {pitchingStats['Batters Faced']}</div>
                                     <div>Flyouts: {pitchingStats['Flyouts']}</div>
@@ -81,6 +84,7 @@ const PlayerStatsCard = ( { playerGameStats } ) => {
                     <>
                         {playerGameStats.started ? 
                             <>
+                                <h5>Hitting</h5>
                                 <div>Starting Position: {startingPosition} </div>
                                 <div>AVG: {hittingStats['AVG']}</div>
                                 <div>Hits: {hittingStats['H']}</div>
@@ -93,9 +97,10 @@ const PlayerStatsCard = ( { playerGameStats } ) => {
                                 <div>BB: {hittingStats['BB']}</div>
                                 <div>SO: {hittingStats['SO']}</div>
 
-                                <Button onClick={toggleAdditionalHittingStats}>More stats</Button>
                                 {isHittingVisible && 
                                     <>
+                                        <h5>Additional Hitting Stats</h5>
+
                                         <div>SAC: {hittingStats['SAC']}</div>
                                         <div>GIDP: {hittingStats['GIDP']}</div>
                                         <div>HBP: {hittingStats['HBP']}</div>
@@ -111,10 +116,11 @@ const PlayerStatsCard = ( { playerGameStats } ) => {
                             </>
                         : <div>No starting position</div>}
 
-                        <div>Baserunning</div>
+                        <h5>Baserunning</h5>
                         <div>CS: {baserunningStats['CS']}</div>
                         <div>PO: {baserunningStats['PO']}</div>
                         <div>SB: {baserunningStats['SB']}</div>
+                        <Button onClick={toggleAdditionalHittingStats}>More stats</Button>
 
                     </>
                 )
@@ -125,13 +131,17 @@ const PlayerStatsCard = ( { playerGameStats } ) => {
 
     return (
         <>
-            {/* {console.log('from player card: ', playerGameStats)} */}
-            <h2> Game: {gameName} </h2>
-            <div> Image of player here </div>
+            {/* <div className='mt-5 mb-5 ml-5 mr-5'> */}
+            <div className ='mx-auto my-1'>
+                <Card style={{width: '25rem'}}>
+                    <Card.Body>
+                        <Card.Title> Game: {gameName}</Card.Title>
+                        <Card.Text>{renderStats(playerGameStats.allPositionsPlayed)}</Card.Text>
+                    </Card.Body>
 
-            {renderStats(playerGameStats.allPositionsPlayed)}
+                </Card>
+            </div>
 
-            <hr/>
         </>
     )
 }

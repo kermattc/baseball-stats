@@ -60,14 +60,15 @@ const PlayerCard = ( { playerGames, playerStats, gameToRemove } ) => {
         <>
             {playerGames.length != 0 && playerStats.length != 0 ? (
                 <>
-                    <div>
-                        Player card for game stats begins here
-                    </div>
                     <h2/>
-                    {console.log("Rendering game stats: ", gameStats)}
-                    {gameStats.map((playerGameStats, gameNumber) => (
-                        <PlayerStatsCard key={"game"+gameNumber} playerGameStats={playerGameStats}/>
-                    ))}
+                    {/* {console.log("Rendering game stats: ", gameStats)} */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap'}}>
+                        {gameStats.map((playerGameStats, gameNumber) => (
+                            <PlayerStatsCard key={"game"+gameNumber} playerGameStats={playerGameStats}/>
+                        ))}
+                        
+                    </div>
+
                 </>
             ): null }
         </>

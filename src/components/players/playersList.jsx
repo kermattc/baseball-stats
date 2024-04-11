@@ -46,6 +46,7 @@ const PlayersList = ({ onPlayerSelect }) => {
         <>
             {!players.loading ? ( 
                 <>
+                <h5>Select a player</h5>
                     <Select
                         value={selectedOption}
                         onChange={handleSelectedPlayer}

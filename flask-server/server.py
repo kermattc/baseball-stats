@@ -8,7 +8,8 @@ cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 player_list_path = os.path.join(os.path.dirname(__file__), 'player-list.json')
-player_stats_path = os.path.join(os.path.dirname(__file__), 'hitter-stats.json')
+# player_stats_path = os.path.join(os.path.dirname(__file__), 'hitter-stats.json')
+player_stats_path = os.path.join(os.path.dirname(__file__), 'hitter-stats-2023.json')
 # player_stats_path = os.path.join(os.path.dirname(__file__), 'pitcher-stats.json')
 
 @app.route('/player-list', methods=["GET"])

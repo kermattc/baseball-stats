@@ -1,7 +1,3 @@
-.selected {
-    color: blue;
-}
-
-.not-selected {
-    color:red;
+.main-div {
+    padding: 20px;
 }

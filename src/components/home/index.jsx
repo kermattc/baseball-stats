@@ -2,6 +2,8 @@ import PlayersList from '../players/playersList.jsx';
 import PlayerGames from '../players/playerGames.jsx';
 import PlayerCard from '../players/playerCard.jsx';
 import { useState, useEffect } from 'react';
+import '../../styles/main.css';
+
 
 const Home = () => {
 
@@ -49,12 +51,12 @@ const Home = () => {
 
     return (
         <>
-            {/* {checkDuplicates(selectedGames)} */}
-            {console.log("Game to remove: ", removeGame)}
-            {/* {console.log("After checking duplicate games: ", selectedGames)} */}
-            <PlayersList onPlayerSelect={handlePlayerSelect}/>
-            <PlayerGames playerID={selectedPlayerID} getPlayerStats={populatePlayerStats} onGameSelect={handleSelectedGames}/>
-            <PlayerCard playerGames={selectedGames} playerStats={playerStats} gameToRemove={removeGame}/>
+            <div class="main-div">
+                <PlayersList onPlayerSelect={handlePlayerSelect}/>
+                <PlayerGames playerID={selectedPlayerID} getPlayerStats={populatePlayerStats} onGameSelect={handleSelectedGames}/>
+                <PlayerCard playerGames={selectedGames} playerStats={playerStats} gameToRemove={removeGame}/>
+            </div>
+
         </>
     )
 }

@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import ToggleButton from 'react-bootstrap/ToggleButton';
-
+import ListGroup from 'react-bootstrap/ListGroup';
 
 const PlayerGames = ( {playerID, getPlayerStats, onGameSelect} ) => {
     const dispatch = useDispatch();
@@ -74,8 +74,29 @@ const PlayerGames = ( {playerID, getPlayerStats, onGameSelect} ) => {
         <>
             {!playerStats.loading ? (  
                 <>
-                    <h3>Select a game to view this player's stats</h3>
-                    <ul>{playerGames.map((game) => (
+                    <h5>Select a game to view this player's stats</h5>
+                    <div style={{maxWidth: screen.width, overflowX: 'scroll'}}>
+                        <ListGroup horizontal='md'> 
+                        {playerGames.map((game) => (
+                            <ListGroup.Item key={game.gameID} action variant='light' className='mx-auto' onClick={() => handleToggle(game.gameID)} active={checkedGames[game.gameID]}> 
+                                {game.gameLabel} 
+                                {/* <ToggleButton
+                                    className="mb-2"
+                                    id={"toggle-check"+game.gameID}
+                                    type="checkbox"
+                                    variant="outline-primary"
+                                    checked={checkedGames[game.gameID]}
+                                    onChange={() => handleToggle(game.gameID)}
+                                >
+                                    View
+                                </ToggleButton> */}
+                            </ListGroup.Item>
+                        ))}
+                        </ListGroup>
+                    </div>
+
+
+                    {/* <ul>{playerGames.map((game) => (
                         <li key={game.gameID}> {game.gameLabel}
                         
                         <ToggleButton
@@ -90,7 +111,7 @@ const PlayerGames = ( {playerID, getPlayerStats, onGameSelect} ) => {
                         </ToggleButton>
                          </li>
                         ))}
-                    </ul> 
+                    </ul>  */}
                 </>
             ) : null}
         </>
