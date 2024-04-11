@@ -51,7 +51,7 @@ const Home = () => {
 
     return (
         <>
-            <div class="main-div">
+            <div className="main-div">
                 <PlayersList onPlayerSelect={handlePlayerSelect}/>
                 <PlayerGames playerID={selectedPlayerID} getPlayerStats={populatePlayerStats} onGameSelect={handleSelectedGames}/>
                 <PlayerCard playerGames={selectedGames} playerStats={playerStats} gameToRemove={removeGame}/>
