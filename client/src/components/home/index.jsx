@@ -1,9 +1,12 @@
 import PlayersList from '../players/playersList.jsx';
 import PlayerGames from '../players/playerGames.jsx';
 import PlayerCard from '../players/playerCard.jsx';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+
 import '../../styles/main.css';
+import Sidebar from '../sidebar/sidebar.jsx';
+import { useState, useEffect } from 'react';
+
+import axios from 'axios';
 
 
 const Home = () => {
@@ -62,13 +65,28 @@ const Home = () => {
 
     return (
         <>
-            <div className="main-div">
-                <PlayersList onPlayerSelect={handlePlayerSelect}/>
-                <PlayerGames playerID={selectedPlayerID} getPlayerStats={populatePlayerStats} onGameSelect={handleSelectedGames}/>
-                <PlayerCard playerGames={selectedGames} playerStats={playerStats} gameToRemove={removeGame}/>
+            <div className="app-container">
+                <div className="sidebar-container">
+                    <Sidebar/>
+                </div>
+                <div className="main-content">
+                    {/* <div className="player-games-container"> */}
+                    <PlayersList onPlayerSelect={handlePlayerSelect} />
+                    {/* </div> */}
+                    <PlayerGames
+                        playerID={selectedPlayerID}
+                        getPlayerStats={populatePlayerStats}
+                        onGameSelect={handleSelectedGames}
+                    />
+                    <PlayerCard
+                        playerGames={selectedGames}
+                        playerStats={playerStats}
+                        gameToRemove={removeGame}
+                    />
+                    
+                    {/* <button onClick={() => onLogin()}>Login</button> */}
+                </div>
             </div>
-
-            <button onClick={() => onLogin()}>Login</button>
         </>
     )
 }
