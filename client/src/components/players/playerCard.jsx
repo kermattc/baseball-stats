@@ -61,7 +61,7 @@ const PlayerCard = ( { playerGames, playerStats, gameToRemove } ) => {
             {playerGames.length != 0 && playerStats.length != 0 ? (
                 <>
                     <h2/>
-                    {/* {console.log("Rendering game stats: ", gameStats)} */}
+                    {console.log("Rendering game stats: ", gameStats)}
                     <div style={{ display: 'flex', flexWrap: 'wrap'}}>
                         {gameStats.map((playerGameStats, gameNumber) => (
                             <PlayerStatsCard key={"game"+gameNumber} playerGameStats={playerGameStats}/>

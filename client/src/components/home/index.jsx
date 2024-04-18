@@ -2,6 +2,7 @@ import PlayersList from '../players/playersList.jsx';
 import PlayerGames from '../players/playerGames.jsx';
 import PlayerCard from '../players/playerCard.jsx';
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import '../../styles/main.css';
 
 
@@ -49,6 +50,16 @@ const Home = () => {
     }, [selectedGames])
 
 
+    const onLogin = () => {
+        axios.get('/api/login', {
+            message: 'logging in user'
+        })
+        .then( response => {
+            console.log(response.data);
+        })
+        .catch(err => console.log('axios post error: ', err))
+    }
+
     return (
         <>
             <div className="main-div">
@@ -57,6 +68,7 @@ const Home = () => {
                 <PlayerCard playerGames={selectedGames} playerStats={playerStats} gameToRemove={removeGame}/>
             </div>
 
+            <button onClick={() => onLogin()}>Login</button>
         </>
     )
 }

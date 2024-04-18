@@ -7,7 +7,7 @@ import { Button } from 'react-bootstrap';
 import Card from 'react-bootstrap/Card';
 
 const PlayerStatsCard = ( { playerGameStats } ) => {
-    // console.log("asdf: ", playerGameStats)
+    console.log("asdf: ", playerGameStats)
 
     const gameID = playerGameStats.gameID
     const year = gameID.substring(0,4); 
@@ -124,8 +124,7 @@ const PlayerStatsCard = ( { playerGameStats } ) => {
 
                     </>
                 )
-            default:
-                return null;
+            default: return (<> Stats Unavailable for this game. Sorry!</>)
         }
     }
 
