@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as FaIcons from 'react-icons/fa';
+import * as AiIcons from 'react-icons/ai';
+
 
 const Sidebar = () => {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -19,6 +21,9 @@ const Sidebar = () => {
 
             </div>
             <nav className={isSidebarCollapsed ? 'nav-menu active' : 'nav-menu' }>
+                <Link to='#' className='menu-bars'>
+                    <AiIcons.AiOutlineClose onClick={toggleSidebar}/>
+                </Link>
                 <form>
                     <label>Username</label><br/>
                     <input type="text" name="name"/><br/>
