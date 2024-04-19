@@ -21,16 +21,23 @@ const Sidebar = () => {
 
             </div>
             <nav className={isSidebarCollapsed ? 'nav-menu active' : 'nav-menu' }>
-                <Link to='#' className='menu-bars'>
-                    <AiIcons.AiOutlineClose onClick={toggleSidebar}/>
-                </Link>
-                <form>
-                    <label>Username</label><br/>
-                    <input type="text" name="name"/><br/>
-                    <label>Password</label><br/>
-                    <input type="text" id="password" name="password"/><br/>
-                    <input type="submit" value="Login"/>
-                </form>
+                <div className='nav-menu-contents'>
+                    <Link to='#' className='menu-bars'>
+                        <AiIcons.AiOutlineClose onClick={toggleSidebar}/>
+                    </Link>
+
+                    <h2 className="login-title">Login</h2>
+                    <div className='login-container'>
+                        <form>
+                            <label>Username</label><br/>
+                            <input type="text" name="name"/><br/>
+                            <label>Password</label><br/>
+                            <input type="text" id="password" name="password"/><br/>
+                            <br/>
+                            <input type="submit" value="Login"/>
+                        </form>
+                    </div>
+                </div>
             </nav>
         </>
     )
