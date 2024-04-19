@@ -32,7 +32,20 @@ const PlayerStatsCard = ( { playerGameStats } ) => {
 
                 return (
                     <>
-                        {playerGameStats.started ? <div>Starting Pitcher</div> : <div>Relief Pitcher</div>}
+                        <ul>
+                            {playerGameStats.started ? <li>Starting Pitcher</li> : <li>Relief Pitcher</li>}
+                            <li>Pitching</li>
+                            <li>ERA: {pitchingStats['ERA']}</li>
+                            <li>ER: {pitchingStats['ER']}</li>
+                            <li>R: {pitchingStats['R']}</li>
+                            <li>SO: {pitchingStats['SO']}</li>
+                            <li>BB: {pitchingStats['BB']}</li>
+                            <li>H: {pitchingStats['H']}</li>
+                            <li>HR: {pitchingStats['HR']}</li>
+                            <li>IningsPitched: {pitchingStats['InningsPitched']}</li>
+                            <li>Pitches: {pitchingStats['Pitches']}</li>
+                        </ul>
+                        {/* {playerGameStats.started ? <div>Starting Pitcher</div> : <div>Relief Pitcher</div>}
                         <h5>Pitching</h5>
                         <div>ERA: {pitchingStats['ERA']}</div>
                         <div>ER: {pitchingStats['ER']}</div>
@@ -42,11 +55,14 @@ const PlayerStatsCard = ( { playerGameStats } ) => {
                         <div>H: {pitchingStats['H']}</div>
                         <div>HR: {pitchingStats['HR']}</div>
                         <div>IningsPitched: {pitchingStats['InningsPitched']}</div>
-                        <div>Pitches: {pitchingStats['Pitches']}</div>
+                        <div>Pitches: {pitchingStats['Pitches']}</div> */}
 
                         <Button onClick={toggleAdditionalPitchingStats}>More stats</Button>
                             {isPitchingVisible && 
                                 <>
+                                    <ul>
+                                        
+                                    </ul>
                                     <h5>Additional Pitching Stats</h5>
                                     <div>Strikes: {pitchingStats['Strikes']}</div>
                                     <div>Batters Faced: {pitchingStats['Batters Faced']}</div>
@@ -82,6 +98,7 @@ const PlayerStatsCard = ( { playerGameStats } ) => {
 
                 return (
                     <>
+                    
                         {playerGameStats.started ? 
                             <>
                                 <h5>Hitting</h5>
@@ -110,37 +127,40 @@ const PlayerStatsCard = ( { playerGameStats } ) => {
                                         <div>TB: {hittingStats['TB']}</div>
                                         <div>Batting Order: {hittingStats.battingOrder}</div>
                                         <div>Substitution Order: {hittingStats.substitutionOrder}</div>
-
                                     </>
                                 }
                             </>
-                        : <div>No starting position</div>}
+                        : 
+                        <>No starting position</>}
 
-                        <h5>Baserunning</h5>
-                        <div>CS: {baserunningStats['CS']}</div>
-                        <div>PO: {baserunningStats['PO']}</div>
-                        <div>SB: {baserunningStats['SB']}</div>
-                        <Button onClick={toggleAdditionalHittingStats}>More stats</Button>
-
+                        <>
+                            <h5>Baserunning</h5>
+                            <div>CS: {baserunningStats['CS']}</div>
+                            <div>PO: {baserunningStats['PO']}</div>
+                            <div>SB: {baserunningStats['SB']}</div>
+                            <Button onClick={toggleAdditionalHittingStats}>More stats</Button>
+                        </>
                     </>
                 )
-            default: return (<> Stats Unavailable for this game. Sorry!</>)
+            default: return (<>Stats Unavailable for this game. Sorry!</>)
         }
     }
 
     return (
         <>
             {/* <div className='mt-5 mb-5 ml-5 mr-5'> */}
-            <div className ='mx-auto my-1'>
-                <Card style={{width: '25rem'}}>
-                    <Card.Body>
-                        <Card.Title> Game: {gameName}</Card.Title>
-                        <Card.Text>{renderStats(playerGameStats.allPositionsPlayed)}</Card.Text>
-                    </Card.Body>
+            <div>
+                <div className ='mx-auto my-1'>
+                    <Card style={{width: '25rem'}}>
+                        <Card.Body>
+                            <Card.Title> Game: {gameName}</Card.Title>
+                                    {renderStats(playerGameStats.allPositionsPlayed)}
+                            {/* <Card.Text tag='div'>{renderStats(playerGameStats.allPositionsPlayed)}</Card.Text> */}
+                        </Card.Body>
 
-                </Card>
+                    </Card>
+                </div>
             </div>
-
         </>
     )
 }

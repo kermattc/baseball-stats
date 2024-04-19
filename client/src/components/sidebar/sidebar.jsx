@@ -1,47 +1,34 @@
-import React from 'react';
-import {
-  CDBSidebar,
-  CDBSidebarContent,
-  CDBSidebarFooter,
-  CDBSidebarHeader,
-  CDBSidebarMenu,
-  CDBSidebarMenuItem,
-} from 'cdbreact';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import * as FaIcons from 'react-icons/fa';
 
 const Sidebar = () => {
-  return (
-    // <div style={{ minHeight: '100vh' }}>
-      <CDBSidebar style={{ minHeight: '100vh'}} textColor="#fff" backgroundColor="#333">
-        <CDBSidebarHeader prefix={<i className="fa fa-bars fa-large"></i>}>
-          <a className="text-decoration-none" style={{ color: 'inherit' }}>
-            Login
-          </a>
-        </CDBSidebarHeader>
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-        <CDBSidebarContent className="sidebar-content">
-          <CDBSidebarMenu>
-            <form> 
-              <label>Username</label><br/>
-              <input type="text" name="name"/><br/>
-              <label>Password</label><br/>
-              <input type="text" id="password" name="password"/><br/>
-              <input type="submit" value="Login"/>
-            </form>
-          </CDBSidebarMenu>
-        </CDBSidebarContent>
+    const toggleSidebar = () => {
+      console.log("sidebar toggled")
+      setIsSidebarCollapsed(!isSidebarCollapsed);
+    }
 
-        <CDBSidebarFooter style={{ textAlign: 'center' }}>
-          <div
-            style={{
-              padding: '20px 5px',
-            }}
-          >
-            Sidebar Footer
-          </div>
-        </CDBSidebarFooter>
-      </CDBSidebar>
-    // </div>
-  );
-};
+    return (
+        <>
+            <div className='navbar'>
+                <Link to='#' className='menu-bars'>
+                    <FaIcons.FaBars onClick={toggleSidebar}/>
+                </Link>
+
+            </div>
+            <nav className={isSidebarCollapsed ? 'nav-menu active' : 'nav-menu' }>
+                <form>
+                    <label>Username</label><br/>
+                    <input type="text" name="name"/><br/>
+                    <label>Password</label><br/>
+                    <input type="text" id="password" name="password"/><br/>
+                    <input type="submit" value="Login"/>
+                </form>
+            </nav>
+        </>
+    )
+}
 
 export default Sidebar;

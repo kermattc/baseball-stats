@@ -59,8 +59,8 @@ const PlayerCard = ( { playerGames, playerStats, gameToRemove } ) => {
     return (
         <>
             {playerGames.length != 0 && playerStats.length != 0 ? (
-                <>
-                    <h2/>
+                <div>
+                    {/* <h2/> */}
                     {console.log("Rendering game stats: ", gameStats)}
                     <div style={{ display: 'flex', flexWrap: 'wrap'}}>
                         {gameStats.map((playerGameStats, gameNumber) => (
@@ -69,7 +69,7 @@ const PlayerCard = ( { playerGames, playerStats, gameToRemove } ) => {
                         
                     </div>
 
-                </>
+                </div>
             ): null }
         </>
     )

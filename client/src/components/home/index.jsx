@@ -67,7 +67,7 @@ const Home = () => {
         <>
             <div className="app-container">
                 <div className="sidebar-container">
-                    <Sidebar/>
+                    {/* <Sidebar/> */}
                 </div>
                 <div className="main-content">
                     {/* <div className="player-games-container"> */}
