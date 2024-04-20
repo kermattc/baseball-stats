@@ -42,9 +42,10 @@ const PlayerStatsCard = ( { playerGameStats } ) => {
                             <li>BB: {pitchingStats['BB']}</li>
                             <li>H: {pitchingStats['H']}</li>
                             <li>HR: {pitchingStats['HR']}</li>
-                            <li>IningsPitched: {pitchingStats['InningsPitched']}</li>
+                            <li>Innings Pitched: {pitchingStats['InningsPitched']}</li>
                             <li>Pitches: {pitchingStats['Pitches']}</li>
                         </ul>
+                        
                         {/* {playerGameStats.started ? <div>Starting Pitcher</div> : <div>Relief Pitcher</div>}
                         <h5>Pitching</h5>
                         <div>ERA: {pitchingStats['ERA']}</div>

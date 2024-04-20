@@ -37,6 +37,8 @@ const Sidebar = () => {
                             <input type="submit" value="Login"/>
                         </form>
                     </div>
+
+                    <Link to="/register">Register</Link>
                 </div>
             </nav>
         </>

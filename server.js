@@ -1,6 +1,12 @@
 const express = require('express');
+const dotenv = require('dotenv'); // for reading environment variables
+
 const app = express();
 
+dotenv.config();
+
+const mongoose = require('mongoose');
+mongoose.connect(process.env.VITE_MONGODB_URI)
 
 console.log("made it here");
 
