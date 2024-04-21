@@ -1,19 +1,18 @@
+const UserRouter = require('./client/src/api/user.cjs');
 const express = require('express');
 const dotenv = require('dotenv'); // for reading environment variables
+dotenv.config();
 
 const app = express();
-
-dotenv.config();
+app.use(express.json())
 
 const mongoose = require('mongoose');
 mongoose.connect(process.env.VITE_MONGODB_URI)
 
-console.log("made it here");
+console.log("Server's running");
 
-app.get('/api/login', async(req, res) => {
-    console.log('Request: ', req, ' Result: ', res)
-    res.sendStatus(200)
-})
+// use the 'user' api defined in /api/user.cjs
+app.use('/user', UserRouter)
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3001
 app.listen(port);
