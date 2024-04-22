@@ -8,7 +8,6 @@ import { useState, useEffect } from 'react';
 
 import axios from 'axios';
 
-
 const Home = () => {
 
     const [selectedPlayerID, setSelectedPlayerID] = useState(null);

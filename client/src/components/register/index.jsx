@@ -22,9 +22,21 @@ const Register = () => {
         })
         .then(response => {
             const res = response.data
-            console.log("Got response: ", res.status)
-            console.log(typeof res.status)
+            console.log("response: ", res)
+            // console.log("Got response: ", res.status)
+            // console.log(typeof res.status)
             if (res.status === 'SUCCESS') {
+                // const token = getJWTToken(username)
+                // console.log("Token: ", token)
+                axios.post('/jwt/getJWTToken', {
+                    username: username
+                }).then(response => {
+                    console.log("Response: ", response)
+                })
+                .catch(error => {
+                    console.log("Error: ", error, res);
+                });
+
                 setRegistered(true);
             }
         })

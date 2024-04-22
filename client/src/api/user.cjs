@@ -46,7 +46,6 @@ router.post('/register', (req, res) => {
                 })
             } else {
                 // create new user. Hash the password using bcrypt
-
                 const saltRounds = parseInt(process.env.VITE_SALT_ROUNDS);
                 bcrypt.hash(password, saltRounds).then(hashedPassword => {
                     const newUser = new User ({

@@ -17,8 +17,13 @@
     "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.5.0",
     "mongoose": "^8.3.2",
+    "nodemon": "^3.1.0",
     "react-icons-kit": "^2.0.0"
+  },
+  "devDependencies": {
+    "vite-plugin-node-polyfills": "^0.21.0"
   }
 }
