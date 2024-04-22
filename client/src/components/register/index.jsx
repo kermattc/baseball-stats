@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Icon } from 'react-icons-kit';
 import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye';
+import { Link } from 'react-router-dom';
 
 const Register = () => {
 
@@ -11,7 +12,7 @@ const Register = () => {
     const [password, setPassword] = useState('')
     const [passVis, setPassVis] = useState(false)
 
-    const [submitted, setSubmitted] = useState(false);
+    const [registered, setRegistered] = useState(false);
 
     const onRegisterUser = () => {
         axios.post('/user/register', {
@@ -20,7 +21,12 @@ const Register = () => {
             password: password
         })
         .then(response => {
-            console.log("Got response: ", response.data)
+            const res = response.data
+            console.log("Got response: ", res.status)
+            console.log(typeof res.status)
+            if (res.status === 'SUCCESS') {
+                setRegistered(true);
+            }
         })
         .catch(error => {
             console.error("Error occurred: ", error);
@@ -29,6 +35,21 @@ const Register = () => {
 
     const togglePasswordVis = () => {
         setPassVis(!passVis)
+    }
+
+    // Displays success message upon successful form submission
+    const successMessage = () => {
+        console.log("displaying success message")
+        return (
+            <div>
+                <center>
+                    <p className='register_redirect mt-2'>Account created successfully 
+                        <b> <a href='/'>Go back to the main page</a></b>
+                    </p>
+                
+                </center>
+            </div>
+        )
     }
 
     return (
@@ -70,6 +91,8 @@ const Register = () => {
             </div>
             {/* <div>Arrived at register page yay!</div> */}
             <button onClick={() => onRegisterUser()}>Register User</button>
+            <Link to="/">Take me back!</Link>
+            { registered ? successMessage() : null}
         </>
     )
 }
