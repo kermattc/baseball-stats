@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 
 const Favourites = () => {
+    const [authenticated, setAuthenticated] = useState(false);
     const [favPlayers, setFavPlayers] = useState([])
 
     // getting players
@@ -12,21 +13,36 @@ const Favourites = () => {
             username: 'asoidfjioajfewio'
         })
         .then(response => {
-            console.log("Response: ", response)
+            console.log("Authentication successful. User is logged in")
+            setAuthenticated(true)
             // console.log("Pulling up favourite players. response: ", response)
 
         })
-        .catch(error => {
-            console.log("User is probably not logged in")
-            console.log("Error 400 bad request", error)
+        .catch(function (error) {
+            if (error.response) {
+                if (error.response.status === 403) {
+                    console.log("Authentication failed. Is the user logged in?")
+
+                    setAuthenticated(false)
+                }
+            }
+            // if (error.response.status === 403) {
+            //     // console.log('err data: ', error.response.data);
+            //     // console.log('err status: ', error.response.status);
+            //     // console.log('err headers: ', error.response.headers);
+
+            // }
         })
     }
 
     useEffect(() => {
         const allCookies = document.cookie;
         console.log(allCookies)
-        getFavPlayers();
 
+        getFavPlayers();
+        // if (document.cookie) {
+        //     setAuthenticated(true);
+        // }
     }, []);
 
 
@@ -35,7 +51,10 @@ const Favourites = () => {
     // Add new ones, update and delete
     return (
         <>
-            Page for favourite players. idk what to do with this rn
+            { authenticated ? 
+                <h2>Placeholder for favourite player data</h2>
+            
+            : <h2>Error 403 - Are you logged in?</h2>}
         </>
     )
 }
