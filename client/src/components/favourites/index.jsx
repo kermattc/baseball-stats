@@ -3,17 +3,21 @@ import React, { useState, useEffect } from 'react';
 
 const Favourites = () => {
     const [authenticated, setAuthenticated] = useState(false);
+    const [username, setUsername] = useState('');
     const [favPlayers, setFavPlayers] = useState([])
 
     // getting players
     // write a function that makes an axios fetch to the backend to get the player's favourite players
     // axios fetch with username -> get user's favourite players from mongo db -> display them here for starters
     const getFavPlayers = () => {
-        axios.get('/user/getFavourites', {
-            username: 'asoidfjioajfewio'
-        })
+        
+        // const allCookies = document.cookie;
+        // console.log(allCookies)
+
+        axios.get('/user/getFavourites')
         .then(response => {
-            console.log("Authentication successful. User is logged in")
+            console.log("Authentication successful. User is logged in. Response: ", response)
+            setUsername(response.data.username)
             setAuthenticated(true)
             // console.log("Pulling up favourite players. response: ", response)
 
@@ -36,9 +40,6 @@ const Favourites = () => {
     }
 
     useEffect(() => {
-        const allCookies = document.cookie;
-        console.log(allCookies)
-
         getFavPlayers();
         // if (document.cookie) {
         //     setAuthenticated(true);
@@ -52,7 +53,7 @@ const Favourites = () => {
     return (
         <>
             { authenticated ? 
-                <h2>Placeholder for favourite player data</h2>
+                <h2>Welcome {username}, here are your favourite players.</h2>
             
             : <h2>Error 403 - Are you logged in?</h2>}
         </>

@@ -150,20 +150,19 @@ router.post('/login', (req, res) => {
 // middleware to check for cookie
 const authorization = (req, res, next) => {
     console.log("token: ", req.cookies.access_token)
-    // console.log("cookie: ", req.headers.cookie)
-    // console.log("token? : ", req.headers.cookie['access_token'])
 
     const token = req.cookies.access_token;
     // console.log("Token: ", token)
     if (!token) {
-        console.log("No token")
         return res.sendStatus(403); // 403 = forbidden, unauthorized
     }
 
     // verify token and get data
     try {
         const data = jwt.verify(token, process.env.VITE_JWT_SECRET_KEY)
-        console.log("Data: ", data)
+
+        // attach username to request
+        req.username = data.username;
 
         return next();
     } catch (error) {
@@ -185,10 +184,10 @@ router.post('/logout', authorization, (req, res) => {
 
 router.get('/getFavourites', authorization, (req, res) => {
     console.log("Authenticated and authorized")
-    console.log("Send this user to mongodb and get the daters: ", req.body)
+    console.log("Send this user to mongodb and get the daters: ", req.username)
     // check jwt for username
     // use the username to go to mongodb and get the favourite players
-    res.status(200).json({message: "Debugging /getFavourites - Authentication successful"})
+    res.status(200).json({message: "Debugging /getFavourites - Authentication successful", username: req.username})
 
 })
 
