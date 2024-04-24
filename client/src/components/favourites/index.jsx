@@ -19,6 +19,7 @@ const Favourites = () => {
         axios.get('/user/getFavourites')
         .then(response => {
             console.log("Authentication successful. User is logged in. Response: ", response)
+            console.log("Username: ", response.data.username)
             setUsername(response.data.username)
             setAuthenticated(true)
             // console.log("Pulling up favourite players. response: ", response)

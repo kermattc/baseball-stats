@@ -88,7 +88,6 @@ router.post('/register', (req, res) => {
     }
 })
 
-// sign in 
 router.post('/login', (req, res) => {
     let {userOrEmail, password} = req.body;
 
@@ -96,7 +95,6 @@ router.post('/login', (req, res) => {
     userOrEmail = userOrEmail.trim();
     password = password.trim();
 
-    console.log("From backend - user or email: ", userOrEmail, " password: ", password)
     if (userOrEmail == "" || password == "") {
         res.json({
             status: "FAILED",
@@ -113,13 +111,14 @@ router.post('/login', (req, res) => {
             if (data.length > 0) {
                 console.log("Found username/email on server. Proceeding to check password")
 
+                // compare hashed password
                 const hashedPassword = data[0].password;
                 bcrypt.compare(password, hashedPassword).then(result => {
                     console.log("result: ", result)
                     if (result){
                         res.json({
-                            status: "FAILED",
-                            message: "Not acutally failed. Validated credentials. Proceed to generate JWT",
+                            status: "SUCCESS",
+                            message: "Validated credentials. Proceed to generate JWT",
                             data: data
                         })
                     } else {
@@ -153,7 +152,7 @@ router.post('/login', (req, res) => {
 
 // middleware to check for cookie
 const authorization = (req, res, next) => {
-    console.log("token: ", req.cookies.access_token)
+    // console.log("token: ", req.cookies.access_token)
 
     const token = req.cookies.access_token;
     // console.log("Token: ", token)
@@ -165,6 +164,8 @@ const authorization = (req, res, next) => {
     try {
         const data = jwt.verify(token, process.env.VITE_JWT_SECRET_KEY)
 
+        console.log("Data: ", data)
+        console.log("Attaching this username to request body: ", data.username)
         // attach username to request
         req.username = data.username;
 

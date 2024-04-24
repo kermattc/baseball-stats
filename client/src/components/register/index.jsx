@@ -1,15 +1,30 @@
+import { toggleLogin } from '../../store/reducers/loginStatus.js'
+
 import Layout from '../layouts'
 
 import axios from 'axios';
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Icon } from 'react-icons-kit';
 import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye';
 import { Link } from 'react-router-dom';
 
-
-
 const Register = () => {
+
+    const dispatch = useDispatch();
+    const loggedIn = useSelector((state) => state.login.loggedIn);
+    // const userOrEmail = useSelector((state) => state.login.username);
+
+    console.log("Log in status: ", loggedIn)
+
+    const handleLogin = () => {
+        dispatch(toggleLogin());
+    }
+
+    const updateUserOrEmail = (userOrEmail) => {
+        dispatch(updateusername(userOrEmail))
+    }
 
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
@@ -31,9 +46,12 @@ const Register = () => {
                 axios.post('/jwt/getJWT', {
                     username: username
                 }).then(response => {
-                    console.log("JWT created: ", response)
+                    console.log("Register successful. JWT created")
                     const jwt = response.access_token;
                     localStorage.setItem('jwt: ', jwt);
+
+                    handleLogin();
+                    updateUserOrEmail(username)
                 })
                 .catch(error => {
                     console.log("Error: ", error, res);
@@ -110,7 +128,6 @@ const Register = () => {
                 <Link to="/">Get me outta here!</Link>
                 { registered ? successMessage() : null}
             </Layout>
-            
         </>
     )
 }
