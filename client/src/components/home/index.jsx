@@ -67,7 +67,10 @@ const Home = () => {
     return (
         <>
             <div className="app-container">
+            {/* <div className='register-form-container'> */}
                 <Layout>
+                    <div>
+                        
                         <PlayersList onPlayerSelect={handlePlayerSelect} />
                         <PlayerGames
                             playerID={selectedPlayerID}
@@ -81,7 +84,7 @@ const Home = () => {
                         />
                         
                         {/* <button onClick={() => onLogin()}>Login</button> */}
-                    {/* </div> */}
+                    </div>
                 </Layout>
             </div>
         </>

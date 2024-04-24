@@ -11,7 +11,7 @@ const Sidebar = () => {
 
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     
-    const [username, setUsername] = useState('');
+    const [userOrEmail, setUserOrEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const toggleSidebar = () => {
@@ -22,17 +22,31 @@ const Sidebar = () => {
     const loginUser = () => {
         event.preventDefault();
         // verify user exists in database
-        console.log("TODO: Implement login in backend. Username: ", username, " password: ", password);
+        console.log("TODO: Implement login in backend. Username: ", userOrEmail, " password: ", password);
 
-        axios.post('/jwt/getJWT', {
-            username: username
-        }).then(response => {
-            response.json({message: "JWT created!", response})
-            // console.log("Response: ", response)
+        axios.post('/user/login',  {
+            userOrEmail: userOrEmail,
+            password: password
         })
-        .catch(error => {
-            console.log("Error: ", error, res);
-        });
+        .then(response => {
+            if (response.data.status === 'SUCCESS') {
+                console.log("User exists in database. Generating JWT")
+                axios.post('/jwt/getJWT', {
+                    userOrEmail: userOrEmail
+                })
+                .then(response => {
+                    response.json({message: "JWT created!", response})
+                    // console.log("Response: ", response)
+                })
+                .catch(error => {
+                    console.log("Error: ", error, res);
+                });
+            } else if (response.data.status === 'FAILED') {
+                console.log("Login failed. Response: ", response.data.message)
+            }
+        }).catch (error => {
+            console.log("Error: ", error)
+        })
     }
 
     return (
@@ -54,13 +68,13 @@ const Sidebar = () => {
 
                     <Link to="/" className={`nav-link ${location.pathname === '/' ?  'disabled': ''}`}>Home</Link>
                     <br/>
-                    <Link to="/favourites" className={`nav-link ${location.pathane === '/favourites' ? 'disabled': ''}`}>Favourites</Link>
+                    <Link to="/favourites" className={`nav-link ${location.pathname === '/favourites' ? 'disabled': ''}`}>Favourites</Link>
 
                     <h2 className="login-title">Login</h2>
                     <div className='login-container'>
                         <form>
-                            <label>Username</label><br/>
-                            <input type="text" name="name" value={username} onChange={(e) => setUsername(e.target.value)}/><br/>
+                            <label>Username or Email</label><br/>
+                            <input type="text" name="name" value={userOrEmail} onChange={(e) => setUserOrEmail(e.target.value)}/><br/>
                             <label>Password</label><br/>
                             <input type="password" id="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)}/><br/>
                             <br/>
@@ -69,7 +83,13 @@ const Sidebar = () => {
                     </div>
 
 
-                    <Link to="/register" className='nav-link'>Register</Link>
+
+                    { location.pathname === '/register' ? null :     
+                        <>
+                            <h5>Don't have an account?</h5>
+                            <Link to="/register" className={`nav-link ${location.pathname === '/register' ? 'disabled': ''}`}>Register</Link>
+                        </> 
+                    }
                 </div>
             </nav>
         </>

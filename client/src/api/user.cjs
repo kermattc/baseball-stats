@@ -90,61 +90,65 @@ router.post('/register', (req, res) => {
 
 // sign in 
 router.post('/login', (req, res) => {
-    let {username, email, password} = req.body;
+    let {userOrEmail, password} = req.body;
 
     // remove whitespace
-    username = username.trim();
-    email = email.trim();
+    userOrEmail = userOrEmail.trim();
     password = password.trim();
 
-    if (email == "" || password == "") {
+    console.log("From backend - user or email: ", userOrEmail, " password: ", password)
+    if (userOrEmail == "" || password == "") {
         res.json({
             status: "FAILED",
             message: "Empty credentials supplied"
         })
     } else {
-        // check if user exists
-        User.find({email})
-        .then(data => {
-            // console.log("Finding email, returns data. Data: ", data)
+        // check if user exists via username or email
+        User.find({$or: [
+            {email: userOrEmail},
+            {username: userOrEmail}
+        ]})
+        .then( data => {
+            console.log("Data: ", data)
             if (data.length > 0) {
-                // User exists
+                console.log("Found username/email on server. Proceeding to check password")
+
                 const hashedPassword = data[0].password;
                 bcrypt.compare(password, hashedPassword).then(result => {
-                    if (result) {
+                    console.log("result: ", result)
+                    if (result){
                         res.json({
-                            status: "SUCCESS",
-                            message: "Sign in successful",
+                            status: "FAILED",
+                            message: "Not acutally failed. Validated credentials. Proceed to generate JWT",
                             data: data
                         })
                     } else {
                         res.json({
                             status: "FAILED",
-                            message: "Invalid credentials"
+                            message: "Invalid credentails"
                         })
-                    }
-                }) 
-                .catch(err => {
-                    console.log(err)
+                    }})
+                    .catch (err => {
+                        res.json({
+                            status: "FAILED",
+                            message: "An error occurred"
+                        })
+                    })
+                } else {
                     res.json({
                         status: "FAILED",
-                        message: "An error occurred"
+                        message: "Invalid credentials"
                     })
-                })
-            } else {
+                }
+            })
+            .catch (err => {
                 res.json({
                     status: "FAILED",
-                    message: "Invalid credentials"
+                    message: "An error occurred"
                 })
             }
-        })
-        .catch(err => {
-            res.json({
-                status: "FAILED",
-                message: "An error occurred"
-            })
-        })
-    }
+        )
+    } 
 })
 
 // middleware to check for cookie
@@ -171,13 +175,14 @@ const authorization = (req, res, next) => {
     }
 }
 
-router.post('/login', (req, res) => {
-    res.status(200).json({message: "Still working on login, but this works"})
+// router.post('/login', (req, res) => {
+//     console.log("Request: ", req)
+//     res.status(200).json({message: "Still working on login, but this works"})
 
-})
+// })
 
 router.post('/logout', authorization, (req, res) => {
-    res.status(200).json({message: "Still working on login, but this works"})
+    res.status(200).json({message: "Still working on logout, but this works"})
 
 })
 
