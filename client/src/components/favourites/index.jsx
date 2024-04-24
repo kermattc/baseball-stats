@@ -1,3 +1,5 @@
+import Layout from '../layouts';
+
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 
@@ -30,12 +32,6 @@ const Favourites = () => {
                     setAuthenticated(false)
                 }
             }
-            // if (error.response.status === 403) {
-            //     // console.log('err data: ', error.response.data);
-            //     // console.log('err status: ', error.response.status);
-            //     // console.log('err headers: ', error.response.headers);
-
-            // }
         })
     }
 
@@ -52,10 +48,14 @@ const Favourites = () => {
     // Add new ones, update and delete
     return (
         <>
-            { authenticated ? 
-                <h2>Welcome {username}, here are your favourite players.</h2>
-            
-            : <h2>Error 403 - Are you logged in?</h2>}
+            <div className="app-container">
+                <Layout>
+                    { authenticated ? 
+                        <h2>Welcome {username}, here are your favourite players.</h2>
+                    
+                    : <h2>Error 403 - Are you logged in?</h2>}
+                </Layout>
+            </div>
         </>
     )
 }

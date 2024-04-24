@@ -77,3 +77,21 @@
 .login-container form {
     margin-right: 25%;
 }
+
+.nav-link {
+    display: block;
+    padding: 10px 10px;
+    /* background-color: #000000; */
+    border-radius: 10px; /* round corners */
+    color: #ffffff;
+}
+
+.nav-link:hover {
+    background-color: #a4bdbd; /* Change background color on hover */
+}
+
+.disabled {
+    pointer-events: none; /* Disable pointer events */
+    cursor: not-allowed; /* Change cursor style to not-allowed */
+    opacity: 0.6; /* Reduce opacity to indicate disabled state */
+}

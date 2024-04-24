@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import * as FaIcons from 'react-icons/fa';
 import * as AiIcons from 'react-icons/ai';
 
 
 const Sidebar = () => {
+    // get the current page pathname
+    const location = useLocation();
+
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     
     const [username, setUsername] = useState('');
@@ -40,11 +43,18 @@ const Sidebar = () => {
                 </Link>
 
             </div>
+
             <nav className={isSidebarCollapsed ? 'nav-menu active' : 'nav-menu' }>
                 <div className='nav-menu-contents'>
+                    
                     <Link to='#' className='menu-bars'>
                         <AiIcons.AiOutlineClose onClick={toggleSidebar}/>
                     </Link>
+
+
+                    <Link to="/" className={`nav-link ${location.pathname === '/' ?  'disabled': ''}`}>Home</Link>
+                    <br/>
+                    <Link to="/favourites" className={`nav-link ${location.pathane === '/favourites' ? 'disabled': ''}`}>Favourites</Link>
 
                     <h2 className="login-title">Login</h2>
                     <div className='login-container'>
@@ -59,7 +69,7 @@ const Sidebar = () => {
                     </div>
 
 
-                    <Link to="/register">Register</Link>
+                    <Link to="/register" className='nav-link'>Register</Link>
                 </div>
             </nav>
         </>
