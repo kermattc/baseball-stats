@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 
 // mongodb user model
 const User = require('./../models/user.cjs')
@@ -144,6 +145,56 @@ router.post('/login', (req, res) => {
             })
         })
     }
+})
+
+// middleware to check for cookie
+const authorization = (req, res, next) => {
+    console.log("token: ", req.cookies.access_token)
+    // console.log("cookie: ", req.headers.cookie)
+    // console.log("token? : ", req.headers.cookie['access_token'])
+
+    const token = req.cookies.access_token;
+    // console.log("Token: ", token)
+    if (!token) {
+        console.log("No token")
+        return res.sendStatus(403); // 403 = forbidden, unauthorized
+    }
+
+    // verify token and get data
+    try {
+        const data = jwt.verify(token, process.env.VITE_JWT_SECRET_KEY)
+        console.log("Data: ", data)
+
+        return next();
+    } catch (error) {
+        console.log("Unable to verify token", error)
+        return res.sendStatus(403);
+    }
+}
+
+router.post('/login', (req, res) => {
+    res.status(200).json({message: "Still working on login, but this works"})
+
+})
+
+router.post('/logout', authorization, (req, res) => {
+    res.status(200).json({message: "Still working on login, but this works"})
+
+})
+
+
+router.get('/getFavourites', authorization, (req, res) => {
+    console.log("Authenticated and authorized")
+    console.log("Send this user to mongodb and get the daters: ", req.body)
+    // check jwt for username
+    // use the username to go to mongodb and get the favourite players
+    res.status(200).json({message: "Debugging /getFavourites - Authentication successful"})
+
+})
+
+// getting data from JWT
+router.post('/protected', authorization, (req, res) => {
+    return res.json({user: req.username})
 })
 
 module.exports = router;

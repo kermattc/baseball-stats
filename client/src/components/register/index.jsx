@@ -5,6 +5,8 @@ import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye';
 import { Link } from 'react-router-dom';
 
+
+
 const Register = () => {
 
     const [username, setUsername] = useState('')
@@ -23,15 +25,13 @@ const Register = () => {
         .then(response => {
             const res = response.data
             console.log("response: ", res)
-            // console.log("Got response: ", res.status)
-            // console.log(typeof res.status)
             if (res.status === 'SUCCESS') {
-                // const token = getJWTToken(username)
-                // console.log("Token: ", token)
-                axios.post('/jwt/getJWTToken', {
+                axios.post('/jwt/getJWT', {
                     username: username
                 }).then(response => {
-                    console.log("Response: ", response)
+                    console.log("JWT created: ", response)
+                    const jwt = response.access_token;
+                    localStorage.setItem('jwt: ', jwt);
                 })
                 .catch(error => {
                     console.log("Error: ", error, res);
