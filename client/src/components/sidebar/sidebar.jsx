@@ -1,13 +1,17 @@
 import { toggleLogin, updateUsername } from '../../store/reducers/loginStatus.js'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
+import { jwtDecode } from "jwt-decode";
+
 import { Link, useLocation } from 'react-router-dom';
 import * as FaIcons from 'react-icons/fa';
 import * as AiIcons from 'react-icons/ai';
 
 const Sidebar = () => {
+    const axiosJWT = axios.create();
+
     const dispatch = useDispatch();
     const loggedIn = useSelector((state) => state.login.loggedIn);
     const usernameOrEmail = useSelector((state) => state.login.username);
@@ -19,6 +23,42 @@ const Sidebar = () => {
     
     const [userOrEmail, setUserOrEmail] = useState('');
     const [password, setPassword] = useState('');
+
+
+    const refreshToken = async() => {
+        try {
+            await axios.post("/user/refresh", {
+                username: usernameOrEmail
+            })
+            .then(response => {
+                // console.log("Refreshed access token. Response: ", response)
+                // console.log("New access token: ", response.data.access_token)
+                const accessToken = response.data.access_token;
+                localStorage.setItem('access_token', accessToken);
+            })
+            .catch(error => {
+                console.log("Error - can't refresh access token ", error)
+            })
+        } catch (error) {
+            console.log("Unable to refresh token: ", error)
+        }
+    }
+
+    // interceptor for refreshing token
+    axiosJWT.interceptors.request.use(
+        async (config) => {
+            let currentDate = new Date();
+            const decodedToken = jwtDecode(localStorage.getItem('jwt'));
+            if (decodedToken.exp * 1000 < currentDate.getTime()) {
+                refreshToken();
+            }
+        }
+    )
+
+    useEffect(() => {
+        refreshToken();
+    }, [])
+
 
     const handleLogin = () => {
         dispatch(toggleLogin());
@@ -45,18 +85,19 @@ const Sidebar = () => {
         .then(response => {
             if (response.data.status === 'SUCCESS') {
                 console.log("User exists in database. Generating JWT")
-                axios.post('/jwt/getJWT', {
+                axios.post('/user/getJWT', {
                     username: userOrEmail
                 })
                 .then(response => {
-                    // console.log("Login successful. JWT created ", response)
-                    const jwt = response.access_token;
-                    localStorage.setItem('jwt', jwt);
+                    console.log("Login successful. JWT created ", response)
+                    const accessToken = response.access_token;
+                    localStorage.setItem('access_token', accessToken);
 
                     setUserOrEmail(userOrEmail)
 
                     handleLogin();
                     updateUserOrEmail(userOrEmail)
+                    window.location.reload();
                 })
                 .catch(error => {
                     console.log("Error: ", error, response);
@@ -72,7 +113,7 @@ const Sidebar = () => {
     const onLogout = (event) => {
         event.preventDefault();
 
-        const token = localStorage.getItem('jwt');
+        const token = localStorage.getItem('access_token');
 
         axios.post('/user/logout', {
             userOrEmail: userOrEmail
@@ -82,10 +123,13 @@ const Sidebar = () => {
             }
         })
         .then(response => {
-            if (response.data.status === 'SUCCESS') {
+            if (response.status === 200) {
+                handleLogin();
+                window.location.reload();
                 console.log("Logout successful")
             } else {
-                console.log("Logout failed. Response: ", response.data.message);
+                console.log("Logout failed. Response: ", response);
+                console.log("response status: ", response.status)
             }
         })
         .catch(error => {
@@ -149,4 +193,6 @@ const Sidebar = () => {
     )
 }
 
+// const verifyToken = (token) => { console.log(jwt_decode(token)); };
+// export default { Sidebar, verifyToken };
 export default Sidebar;

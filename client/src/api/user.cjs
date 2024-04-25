@@ -6,6 +6,99 @@ const jwt = require('jsonwebtoken');
 // mongodb user model
 const User = require('./../models/user.cjs')
 
+// middleware to check for cookie
+const authorization = (req, res, next) => {
+    // const accessToken = req.headers.authorization.split(' ')[1];
+    const accessToken = req.headers.authorization.split(" ")[1];
+    // console.log("This the access token? ", req.headers.authorization)
+    const refreshToken = req.cookies.refresh_token;
+
+    console.log("Access token: ", accessToken)
+    console.log("Refresh token: ", refreshToken);
+
+    if (!accessToken && !refreshToken) {
+        return res.status(401).send('Access denied. No token provided')
+    }
+
+    // verify access token
+    try {
+        const decoded = jwt.verify(accessToken, process.env.VITE_JWT_SECRET_ACCESS)
+        console.log("Decoded access token: ", decoded)
+
+        // req.username = decoded.username;
+
+    } catch (error) {
+        console.log("Error: ", error)
+        return (res.status(401).send("Token expired"))
+    }
+
+    // verify refresh token
+    try {
+        const decoded = jwt.verify(refreshToken, process.env.VITE_JWT_SECRET_REFRESH)
+        req.username = decoded.username;
+        // const accessToken = jwt.sign({username: decoded.username}, process.env.VITE_JWT_SECRET_REFRESH)
+
+        next();
+
+        // res
+        //     .status(200)
+        //     .cookie("refresh_token", refreshToken, {
+        //         httpOnly: true,
+        //         sameSite: 'strict', 
+        //         secure: true,
+        //         maxAge: 3600 * 1000  // refresh token expires in 1 hour (maxAge is in milliseconds)
+        //     })
+        //     .header('access_token', accessToken)
+    } catch (error) {
+        console.log("Error: ", error)
+        return res.status(400).send('Invalid token')
+    }
+}
+
+let refreshTokens = []
+
+router.post('/getJWT', (req, res) => {
+    const jwtSecretAccess = process.env.VITE_JWT_SECRET_ACCESS;
+    const jwtSecretRefresh = process.env.VITE_JWT_SECRET_REFRESH;
+
+    const username = req.body.username;
+
+    let data = {
+        username: username,
+        signInTime: Date.now()
+    };
+
+    const accessToken = jwt.sign(
+        data, 
+        jwtSecretAccess, 
+        // {expiresIn: '10m'} // 10 minutes
+        {expiresIn: '10m'}
+    );
+
+    const refreshToken = jwt.sign(
+        data,
+        jwtSecretRefresh,
+        {expiresIn: '15m'}
+    );
+
+    // append to list of tokens
+    refreshTokens.push(refreshToken)
+
+    console.log("refresh tokens: ", refreshTokens)
+    // assign refresh token in http-opnly cookie. max age will be 1 hour
+    res
+        .status(200)
+        // .header('Authorization', accessToken)
+        .cookie("refresh_token", refreshToken, {
+            httpOnly: true,
+            sameSite: 'strict', 
+            secure: true,
+            maxAge: 3600 * 1000  // refresh token expires in 1 hour (maxAge is in milliseconds)
+        })
+        .json({'message': 'Generated refresh and access tokens', access_token: accessToken})
+});
+
+
 // sign up
 router.post('/register', (req, res) => {
     let {username, email, password} = req.body;
@@ -150,66 +243,15 @@ router.post('/login', (req, res) => {
     } 
 })
 
-// middleware to check for cookie
-const authorization = (req, res, next) => {
-    // console.log("token: ", req.cookies.access_token)
-    // console.log("access token?: ", req.headers.authorization)
-    // console.log("Cookies: ", req.cookies)
-
-    const accessToken = req.headers.authorization.split(' ')[1];
-    const refreshToken = req.cookies.refresh_token;
-
-    // console.log("Access token: ", accessToken)
-    // console.log("Refersh token: ", refreshToken)
-
-    if (!accessToken && !refreshToken) {
-        return res.status(401).send('Access denied. No token provided')
-    }
-
-    try {
-        const decoded = jwt.verify(accessToken, process.env.VITE_JWT_SECRET_ACCESS)
-        // console.log("Decoded access token: ", decoded)
-
-        req.username = decoded.username;
-
-        next();
-    } catch (error) {
-        console.log(error)
-        return (res.status(401).send("Token expired"))
-    }
-
-    try {
-        const decoded = jwt.verify(refreshToken, process.env.VITE_JWT_SECRET_REFRESH)
-        // console.log("Decoded refresh token: ", decoded)
-
-        const accessToken = jwt.sign({username: decoded.username}, process.env.VITE_JWT_SECRET_REFRESH)
-
-        res
-            .status(200)
-            .cookie("refresh_token", refreshToken, {
-                httpOnly: true,
-                sameSite: 'strict', 
-                secure: true,
-                maxAge: 3600 * 1000  // refresh token expires in 1 hour (maxAge is in milliseconds)
-            })
-            .header('access_token', accessToken)
-    } catch (error) {
-        console.log("Error: ", error)
-        return res.status(400).send('Invalid token')
-    }
-}
-
-// router.post('/login', (req, res) => {
-//     console.log("Request: ", req)
-//     res.status(200).json({message: "Still working on login, but this works"})
-
-// })
-
+// remove the refresh token from the list
 router.post('/logout', authorization, (req, res) => {
-    res.json({status: "FAILED", message: "Still working on logout, but this works"})
+    const refreshToken = req.cookies.refresh_token;
+    refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
 
+    // console.log("Refresh token check - should be empty i think: ", refreshTokens)
+    // res.json({status: "FAILED", message: "Still working on logout, but this works"})
+    res.status(200).json("Successfully logged out")
 })
-
 
 router.get('/getFavourites', authorization, (req, res) => {
     console.log("Authenticated and authorized")
@@ -225,28 +267,59 @@ router.post('/protected', authorization, (req, res) => {
     return res.json({user: req.username})
 })
 
+// refresh the access token if the refresh token is still valid
 router.post('/refresh', (req, res) => {
+    // console.log("Refresh tokens: ", refreshTokens)
+    const refreshToken = req.cookies.refresh_token;
+    const username = req.body.username;
+
+    // error if refresh token expired or is not valid
+    if (!refreshToken) return res.status(401).json("Refresh token expired")
+    if (!refreshTokens.includes(refreshToken)) {
+        return res.status(403).json("Refresh token is not valid");
+    }
+    
+    jwt.verify(refreshToken, process.env.VITE_JWT_SECRET_REFRESH, (err) => {
+        err && console.log(err);
+        // invalidate refresh token by removing it from the list
+        refreshTokens = refreshTokens.filter(token => token !== refreshToken);
+        
+        let data = {
+            username: username,
+            signInTime: Date.now()
+        };
+
+        const newAccessToken = jwt.sign(
+            data,
+            process.env.VITE_JWT_SECRET_ACCESS,
+            {expiresIn: '10m'}
+        )
+
+        console.log("Created new access token: ", newAccessToken)
+        // create new refresh token for more security
+        const newRefreshToken = jwt.sign(
+            data,
+            process.env.VITE_JWT_SECRET_REFRESH,
+            {expiresIn: '15m'}
+        );
+
+        refreshTokens.push(newRefreshToken)
+
+        res
+            .status(200)
+            .cookie("refresh_token", newRefreshToken, {
+                httpOnly: true,
+                sameSite: 'strict',
+                secure: true,
+                maxAge: 3600 * 1000
+            })
+            .json({
+                access_token: newAccessToken,
+            }
+        )
+    })
+    // refresh the access token if valid
 
 })
-
-/*
-app.post('/refresh', (req, res) => {
-  const refreshToken = req.cookies['refreshToken'];
-  if (!refreshToken) {
-    return res.status(401).send('Access Denied. No refresh token provided.');
-  }
-
-  try {
-    const decoded = jwt.verify(refreshToken, secretKey);
-    const accessToken = jwt.sign({ user: decoded.user }, secretKey, { expiresIn: '1h' });
-
-    res
-      .header('Authorization', accessToken)
-      .send(decoded.user);
-  } catch (error) {
-    return res.status(400).send('Invalid refresh token.');
-  }
-});
-*/
 
 module.exports = router;
