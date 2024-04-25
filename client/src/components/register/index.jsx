@@ -1,4 +1,4 @@
-import { toggleLogin } from '../../store/reducers/loginStatus.js'
+import { toggleLogin, updateUsername } from '../../store/reducers/loginStatus.js'
 
 import Layout from '../layouts'
 
@@ -14,18 +14,17 @@ const Register = () => {
 
     const dispatch = useDispatch();
     const loggedIn = useSelector((state) => state.login.loggedIn);
-    // const userOrEmail = useSelector((state) => state.login.username);
+
+    const usernameOrEmail = useSelector((state) => state.login.username);
 
     console.log("Log in status: ", loggedIn)
 
     const handleLogin = () => {
         dispatch(toggleLogin());
     }
-
     const updateUserOrEmail = (userOrEmail) => {
-        dispatch(updateusername(userOrEmail))
+        dispatch(updateUsername(userOrEmail))
     }
-
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -46,9 +45,9 @@ const Register = () => {
                 axios.post('/jwt/getJWT', {
                     username: username
                 }).then(response => {
-                    console.log("Register successful. JWT created")
-                    const jwt = response.access_token;
-                    localStorage.setItem('jwt: ', jwt);
+                    // console.log("Access token from response: ", response.data.access_token)
+                    const jwt = response.data.access_token;
+                    localStorage.setItem('jwt', jwt);
 
                     handleLogin();
                     updateUserOrEmail(username)

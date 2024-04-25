@@ -7,7 +7,6 @@ import { Link, useLocation } from 'react-router-dom';
 import * as FaIcons from 'react-icons/fa';
 import * as AiIcons from 'react-icons/ai';
 
-
 const Sidebar = () => {
     const dispatch = useDispatch();
     const loggedIn = useSelector((state) => state.login.loggedIn);
@@ -33,10 +32,11 @@ const Sidebar = () => {
     const updateUserOrEmail = (userOrEmail) => {
         dispatch(updateUsername(userOrEmail))
     }
-    const loginUser = () => {
+    
+    const loginUser = (event) => {
         event.preventDefault();
         // verify user exists in database
-        console.log("TODO: Implement login in backend. Username: ", userOrEmail, " password: ", password);
+        // console.log("TODO: Implement login in backend. Username: ", userOrEmail, " password: ", password);
 
         axios.post('/user/login',  {
             userOrEmail: userOrEmail,
@@ -49,9 +49,9 @@ const Sidebar = () => {
                     username: userOrEmail
                 })
                 .then(response => {
-                    console.log("Login successful. JWT created ")
+                    // console.log("Login successful. JWT created ", response)
                     const jwt = response.access_token;
-                    localStorage.setItem('jwt: ', jwt);
+                    localStorage.setItem('jwt', jwt);
 
                     setUserOrEmail(userOrEmail)
 
@@ -61,11 +61,35 @@ const Sidebar = () => {
                 .catch(error => {
                     console.log("Error: ", error, response);
                 });
-            } else if (response.data.status === 'FAILED') {
+            } else {
                 console.log("Login failed. Response: ", response.data.message)
             }
         }).catch (error => {
             console.log("Error: ", error)
+        })
+    }
+
+    const onLogout = (event) => {
+        event.preventDefault();
+
+        const token = localStorage.getItem('jwt');
+
+        axios.post('/user/logout', {
+            userOrEmail: userOrEmail
+        }, {
+            headers:{
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => {
+            if (response.data.status === 'SUCCESS') {
+                console.log("Logout successful")
+            } else {
+                console.log("Logout failed. Response: ", response.data.message);
+            }
+        })
+        .catch(error => {
+            console.log("Error: ", error, response);
         })
     }
 
@@ -93,6 +117,7 @@ const Sidebar = () => {
                     {loggedIn ? 
                         <>
                             <h2>Hello {usernameOrEmail}!</h2>
+                            <button onClick={onLogout}>Logout</button>
                         </> 
                     : 
                     <>
@@ -104,7 +129,7 @@ const Sidebar = () => {
                                 <label>Password</label><br/>
                                 <input type="password" id="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)}/><br/>
                                 <br/>
-                                <input type="submit" value="Login" onClick={() => loginUser()}/>
+                                <input type="submit" value="Login" onClick={(e) => loginUser(e)}/>
                             </form>
                         </div>
     
