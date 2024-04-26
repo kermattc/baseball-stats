@@ -7,22 +7,24 @@ const Favourites = () => {
     const [authenticated, setAuthenticated] = useState(false);
     const [username, setUsername] = useState('');
     const [favPlayers, setFavPlayers] = useState([])
+    const loggedIn = useSelector((state) => state.login.loggedIn);
 
     // getting players
     // write a function that makes an axios fetch to the backend to get the player's favourite players
     // axios fetch with username -> get user's favourite players from mongo db -> display them here for starters
     const getFavPlayers = () => {
         
-        // const allCookies = document.cookie;
-        // console.log(allCookies)
+        const token = localStorage.getItem('access_token');
 
         axios.get('/user/getFavourites')
         .then(response => {
-            console.log("Authentication successful. User is logged in. Response: ", response)
-            console.log("Username: ", response.data.username)
-            setUsername(response.data.username)
-            setAuthenticated(true)
-            // console.log("Pulling up favourite players. response: ", response)
+            console.log("Response: ", response)
+            if (response.status === 200){
+                setUsername(response.data.username)
+                setAuthenticated(true)
+
+            }
+
 
         })
         .catch(function (error) {
@@ -38,13 +40,10 @@ const Favourites = () => {
 
     useEffect(() => {
         getFavPlayers();
-        // if (document.cookie) {
-        //     setAuthenticated(true);
-        // }
-    }, []);
+    }, [loggedIn]);
 
 
-    // CRUD operations
+    // WIP - CRUD operations
     // here the user can make changes to their favourite players
     // Add new ones, update and delete
     return (

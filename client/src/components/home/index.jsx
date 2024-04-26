@@ -35,22 +35,20 @@ const Home = () => {
     }
 
     useEffect(() => {
-        // const checkDuplicates = (games) => {
-            const temp = selectedGames
-            var dupeGame = false
-            if (temp.length > 1) {
-                const latestGame = temp[temp.length-1]
-                for (var i = 0; i < temp.length-1; i++) {
-                    if (temp[i] === latestGame) {
-                        temp.splice(i, 1)
-                        temp.splice(-1)
-                        setSelectedGames(temp)
-                        dupeGame = true
-                    }
+        const temp = selectedGames
+        var dupeGame = false
+        if (temp.length > 1) {
+            const latestGame = temp[temp.length-1]
+            for (var i = 0; i < temp.length-1; i++) {
+                if (temp[i] === latestGame) {
+                    temp.splice(i, 1)
+                    temp.splice(-1)
+                    setSelectedGames(temp)
+                    dupeGame = true
                 }
-                dupeGame ? setRemoveGame(latestGame) : setRemoveGame("")
             }
-        // }
+            dupeGame ? setRemoveGame(latestGame) : setRemoveGame("")
+        }
     }, [selectedGames])
 
 
@@ -67,10 +65,8 @@ const Home = () => {
     return (
         <>
             <div className="app-container">
-            {/* <div className='register-form-container'> */}
                 <Layout>
                     <div>
-                        
                         <PlayersList onPlayerSelect={handlePlayerSelect} />
                         <PlayerGames
                             playerID={selectedPlayerID}
@@ -83,7 +79,6 @@ const Home = () => {
                             gameToRemove={removeGame}
                         />
                         
-                        {/* <button onClick={() => onLogin()}>Login</button> */}
                     </div>
                 </Layout>
             </div>
