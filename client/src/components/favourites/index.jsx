@@ -2,6 +2,7 @@ import Layout from '../layouts';
 
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Favourites = () => {
     const [authenticated, setAuthenticated] = useState(false);
