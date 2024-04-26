@@ -21,18 +21,16 @@ const Sidebar = () => {
 
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     
-    const [userOrEmail, setUserOrEmail] = useState('');
+    const [userOrEmail, setUserOrEmail] = useState(''); // not sure about this yet
     const [password, setPassword] = useState('');
 
-
+    // refresh access token
     const refreshToken = async() => {
         try {
             await axios.post("/user/refresh", {
                 username: usernameOrEmail
             })
             .then(response => {
-                // console.log("Refreshed access token. Response: ", response)
-                // console.log("New access token: ", response.data.access_token)
                 const accessToken = response.data.access_token;
                 localStorage.setItem('access_token', accessToken);
             })
@@ -47,6 +45,11 @@ const Sidebar = () => {
     // interceptor for refreshing token
     axiosJWT.interceptors.request.use(
         async (config) => {
+            console.log("config: ", config)
+            if (config.url ==='/user/login') {  // skip login
+                return config;
+            }
+            // check for expired access token and refresh if it is expired
             let currentDate = new Date();
             const decodedToken = jwtDecode(localStorage.getItem('jwt'));
             if (decodedToken.exp * 1000 < currentDate.getTime()) {
@@ -55,49 +58,41 @@ const Sidebar = () => {
         }
     )
 
-    useEffect(() => {
-        refreshToken();
-    }, [])
-
-
+    // toggle boolean from redux store
     const handleLogin = () => {
         dispatch(toggleLogin());
     }
 
-    const toggleSidebar = () => {
-    //   console.log("sidebar toggled")
-      setIsSidebarCollapsed(!isSidebarCollapsed);      
-    }
-
+    // updated after user successfully logs in
     const updateUserOrEmail = (userOrEmail) => {
         dispatch(updateUsername(userOrEmail))
     }
     
+    // hide/unhide sidebar
+    const toggleSidebar = () => {
+        setIsSidebarCollapsed(!isSidebarCollapsed);      
+    }
+    
+    // perform login. If successful, get jwt's for access and refresh tokens
     const loginUser = (event) => {
         event.preventDefault();
-        // verify user exists in database
-        // console.log("TODO: Implement login in backend. Username: ", userOrEmail, " password: ", password);
-
         axios.post('/user/login',  {
             userOrEmail: userOrEmail,
             password: password
         })
         .then(response => {
             if (response.data.status === 'SUCCESS') {
-                console.log("User exists in database. Generating JWT")
                 axios.post('/user/getJWT', {
                     username: userOrEmail
                 })
                 .then(response => {
-                    console.log("Login successful. JWT created ", response)
-                    const accessToken = response.access_token;
+                    const accessToken = response.data.access_token;
                     localStorage.setItem('access_token', accessToken);
 
                     setUserOrEmail(userOrEmail)
 
                     handleLogin();
                     updateUserOrEmail(userOrEmail)
-                    window.location.reload();
                 })
                 .catch(error => {
                     console.log("Error: ", error, response);
@@ -110,6 +105,7 @@ const Sidebar = () => {
         })
     }
 
+    // log out user. Invalidates the refresh token the user logged in with
     const onLogout = (event) => {
         event.preventDefault();
 
@@ -193,6 +189,4 @@ const Sidebar = () => {
     )
 }
 
-// const verifyToken = (token) => { console.log(jwt_decode(token)); };
-// export default { Sidebar, verifyToken };
 export default Sidebar;
