@@ -10,6 +10,8 @@ const Favourites = () => {
     const [favPlayers, setFavPlayers] = useState([])
     const loggedIn = useSelector((state) => state.login.loggedIn);
 
+    const usernameOrEmail = useSelector((state) => state.login.username);
+
     // getting players
     // write a function that makes an axios fetch to the backend to get the player's favourite players
     // axios fetch with username -> get user's favourite players from mongo db -> display them here for starters
@@ -17,7 +19,12 @@ const Favourites = () => {
         
         const token = localStorage.getItem('access_token');
 
-        axios.get('/user/getFavourites')
+        axios.get('/user/getFavourites', {
+            username: usernameOrEmail,
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
         .then(response => {
             console.log("Response: ", response)
             if (response.status === 200){

@@ -22,6 +22,7 @@ const Register = () => {
     const handleLogin = () => {
         dispatch(toggleLogin());
     }
+    
     const updateUserOrEmail = (userOrEmail) => {
         dispatch(updateUsername(userOrEmail))
     }
@@ -42,12 +43,12 @@ const Register = () => {
             const res = response.data
             console.log("response: ", res)
             if (res.status === 'SUCCESS') {
-                axios.post('/jwt/getJWT', {
+                axios.post('/user/getJWT', {
                     username: username
                 }).then(response => {
                     // console.log("Access token from response: ", response.data.access_token)
-                    const jwt = response.data.access_token;
-                    localStorage.setItem('jwt', jwt);
+                    const accessToken = response.data.access_token;
+                    localStorage.setItem('access_token', accessToken);
 
                     handleLogin();
                     updateUserOrEmail(username)

@@ -1,6 +1,6 @@
 import { toggleLogin, updateUsername } from '../../store/reducers/loginStatus.js'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { jwtDecode } from "jwt-decode";
@@ -109,7 +109,7 @@ const Sidebar = () => {
     const onLogout = (event) => {
         event.preventDefault();
 
-        const token = localStorage.getItem('jwt');
+        const token = localStorage.getItem('access_token');
 
         axios.post('/user/logout', {
             userOrEmail: userOrEmail
@@ -119,10 +119,13 @@ const Sidebar = () => {
             }
         })
         .then(response => {
-            if (response.data.status === 'SUCCESS') {
+            if (response.status === 200) {
+                handleLogin();
+                window.location.reload();
                 console.log("Logout successful")
             } else {
-                console.log("Logout failed. Response: ", response.data.message);
+                console.log("Logout failed. Response: ", response);
+                console.log("response status: ", response.status)
             }
         })
         .catch(error => {
