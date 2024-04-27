@@ -1,16 +1,60 @@
 import Layout from '../layouts';
 
 import axios from 'axios';
+
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { updateLogin } from '../../store/reducers/loginStatus.js'
 
 const Favourites = () => {
-    const [authenticated, setAuthenticated] = useState(false);
+
+    const axiosJWT = axios.create();
+    const dispatch = useDispatch();
+
+    // const [authenticated, setAuthenticated] = useState(false);
     const [username, setUsername] = useState('');
     const [favPlayers, setFavPlayers] = useState([])
     const loggedIn = useSelector((state) => state.login.loggedIn);
 
     const usernameOrEmail = useSelector((state) => state.login.username);
+
+    // refresh access token
+    const refreshToken = async() => {
+        try {
+            await axios.post("/user/refresh", {
+                username: usernameOrEmail
+            })
+            .then(response => {
+                const accessToken = response.data.access_token;
+                localStorage.setItem('access_token', accessToken);
+            })
+            .catch(error => {
+                console.log("Error - can't refresh access token ", error)
+            })
+        } catch (error) {
+            console.log("Unable to refresh token: ", error)
+        }
+    }
+
+    // interceptor for refreshing token
+    axiosJWT.interceptors.request.use(
+        async (config) => {
+            console.log("config: ", config)
+            if (config.url ==='/user/login') {  // skip login
+                return config;
+            }
+            // check for expired access token and refresh if it is expired
+            let currentDate = new Date();
+            const decodedToken = jwtDecode(localStorage.getItem('jwt'));
+            if (decodedToken.exp * 1000 < currentDate.getTime()) {
+                refreshToken();
+            }
+        }
+    )
+
+    const handleLogin = (loginStatus) => {
+        dispatch(updateLogin(loginStatus));
+    }
 
     // getting players
     // write a function that makes an axios fetch to the backend to get the player's favourite players
@@ -29,18 +73,17 @@ const Favourites = () => {
             console.log("Response: ", response)
             if (response.status === 200){
                 setUsername(response.data.username)
-                setAuthenticated(true)
-
-            }
-
-
+                handleLogin(true)
+            } 
         })
         .catch(function (error) {
             if (error.response) {
                 if (error.response.status === 403) {
                     console.log("Authentication failed. Is the user logged in?")
 
-                    setAuthenticated(false)
+                    handleLogin(false)
+                } else if (error.response.status === 401) {
+                    handleLogin(false)
                 }
             }
         })
@@ -48,7 +91,8 @@ const Favourites = () => {
 
     useEffect(() => {
         getFavPlayers();
-    }, [loggedIn]);
+        // console.log("authenticated: ", authenticated)
+    }, [loggedIn]); 
 
 
     // WIP - CRUD operations
@@ -58,7 +102,7 @@ const Favourites = () => {
         <>
             <div className="app-container">
                 <Layout>
-                    { authenticated ? 
+                    { loggedIn ? 
                         <h2>Welcome {username}, here are your favourite players.</h2>
                     
                     : <h2>Error 403 - Are you logged in?</h2>}

@@ -1,4 +1,4 @@
-import { toggleLogin, updateUsername } from '../../store/reducers/loginStatus.js'
+import { updateLogin, updateUsername } from '../../store/reducers/loginStatus.js'
 
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -36,9 +36,11 @@ const Sidebar = () => {
             })
             .catch(error => {
                 console.log("Error - can't refresh access token ", error)
+                handleLogin(false)
             })
         } catch (error) {
             console.log("Unable to refresh token: ", error)
+            handleLogin(false)
         }
     }
 
@@ -53,14 +55,15 @@ const Sidebar = () => {
             let currentDate = new Date();
             const decodedToken = jwtDecode(localStorage.getItem('jwt'));
             if (decodedToken.exp * 1000 < currentDate.getTime()) {
-                refreshToken();
+                await refreshToken();
             }
+            return config;
         }
     )
 
     // toggle boolean from redux store
-    const handleLogin = () => {
-        dispatch(toggleLogin());
+    const handleLogin = (loginStatus) => {
+        dispatch(updateLogin(loginStatus));
     }
 
     // updated after user successfully logs in
@@ -91,7 +94,7 @@ const Sidebar = () => {
 
                     setUserOrEmail(userOrEmail)
 
-                    handleLogin();
+                    handleLogin(true);
                     updateUserOrEmail(userOrEmail)
                 })
                 .catch(error => {
@@ -120,16 +123,17 @@ const Sidebar = () => {
         })
         .then(response => {
             if (response.status === 200) {
-                handleLogin();
                 window.location.reload();
                 console.log("Logout successful")
+                handleLogin(false);
             } else {
                 console.log("Logout failed. Response: ", response);
                 console.log("response status: ", response.status)
             }
         })
         .catch(error => {
-            console.log("Error: ", error, response);
+            console.log("Error: ", error);
+            handleLogin(false);
         })
     }
 

@@ -1,4 +1,4 @@
-import { toggleLogin, updateUsername } from '../../store/reducers/loginStatus.js'
+import { updateLogin, updateUsername } from '../../store/reducers/loginStatus.js'
 
 import Layout from '../layouts'
 
@@ -19,8 +19,8 @@ const Register = () => {
 
     console.log("Log in status: ", loggedIn)
 
-    const handleLogin = () => {
-        dispatch(toggleLogin());
+    const handleLogin = (loginStatus) => {
+        dispatch(handleLogin(loginStatus));
     }
     
     const updateUserOrEmail = (userOrEmail) => {
@@ -50,7 +50,7 @@ const Register = () => {
                     const accessToken = response.data.access_token;
                     localStorage.setItem('access_token', accessToken);
 
-                    handleLogin();
+                    handleLogin(true);
                     updateUserOrEmail(username)
                 })
                 .catch(error => {

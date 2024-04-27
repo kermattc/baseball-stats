@@ -7,8 +7,8 @@ export const loginSlice = createSlice({
         username: ''
     },
     reducers: {
-        toggleLogin: (state) => {
-            state.loggedIn = !state.loggedIn;
+        updateLogin: (state, action) => {
+            state.loggedIn = action.payload;
         },
         updateUsername: (state, action) => {
             state.username = action.payload
@@ -16,6 +16,6 @@ export const loginSlice = createSlice({
     }
 })
 
-export const { toggleLogin, updateUsername } = loginSlice.actions;
+export const { updateLogin, updateUsername } = loginSlice.actions;
 
 export default loginSlice.reducer;
