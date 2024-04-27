@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { jwtDecode } from "jwt-decode";
 
-
 // refresh access token
-export const refreshToken = async() => {
+export const refreshToken = async(usernameOrEmail) => {
     try {
         await axios.post("/user/refresh", {
             username: usernameOrEmail
@@ -23,7 +22,8 @@ export const refreshToken = async() => {
 }
 
 // interceptor for refreshing token
-export const setupInterceptors = () => {
+export const setupInterceptors = (usernameOrEmail) => {
+
     const axiosJWT = axios.create();
 
     axiosJWT.interceptors.request.use(
@@ -36,7 +36,7 @@ export const setupInterceptors = () => {
             let currentDate = new Date();
             const decodedToken = jwtDecode(localStorage.getItem('jwt'));
             if (decodedToken.exp * 1000 < currentDate.getTime()) {
-                await refreshToken();
+                await refreshToken(usernameOrEmail);
             }
             return config;
         }

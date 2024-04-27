@@ -19,48 +19,13 @@ const Favourites = () => {
     const usernameOrEmail = useSelector((state) => state.login.username);
 
     useEffect(() => {
-        setupInterceptors();
-    }, [])
+        setupInterceptors(usernameOrEmail);
+    }, [usernameOrEmail])
 
     useEffect(() => {
         getFavPlayers();
         // console.log("authenticated: ", authenticated)
     }, [loggedIn]); 
-
-
-    // // refresh access token
-    // const refreshToken = async() => {
-    //     try {
-    //         await axios.post("/user/refresh", {
-    //             username: usernameOrEmail
-    //         })
-    //         .then(response => {
-    //             const accessToken = response.data.access_token;
-    //             localStorage.setItem('access_token', accessToken);
-    //         })
-    //         .catch(error => {
-    //             console.log("Error - can't refresh access token ", error)
-    //         })
-    //     } catch (error) {
-    //         console.log("Unable to refresh token: ", error)
-    //     }
-    // }
-
-    // // interceptor for refreshing token
-    // axiosJWT.interceptors.request.use(
-    //     async (config) => {
-    //         console.log("config: ", config)
-    //         if (config.url ==='/user/login') {  // skip login
-    //             return config;
-    //         }
-    //         // check for expired access token and refresh if it is expired
-    //         let currentDate = new Date();
-    //         const decodedToken = jwtDecode(localStorage.getItem('jwt'));
-    //         if (decodedToken.exp * 1000 < currentDate.getTime()) {
-    //             refreshToken();
-    //         }
-    //     }
-    // )
 
     const handleLogin = (loginStatus) => {
         dispatch(updateLogin(loginStatus));
@@ -84,6 +49,8 @@ const Favourites = () => {
             if (response.status === 200){
                 setUsername(response.data.username)
                 handleLogin(true)
+
+                console.log(response.data.favPlayers)
             } 
         })
         .catch(function (error) {

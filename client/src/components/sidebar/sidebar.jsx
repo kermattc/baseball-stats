@@ -11,14 +11,16 @@ import * as AiIcons from 'react-icons/ai';
 
 const Sidebar = () => {
 
-    useEffect(() => {
-        setupInterceptors();
-    }, [])
+
 
     const dispatch = useDispatch();
     const loggedIn = useSelector((state) => state.login.loggedIn);
     const usernameOrEmail = useSelector((state) => state.login.username);
 
+    useEffect(() => {
+        setupInterceptors(usernameOrEmail);
+    }, [usernameOrEmail])
+    
     // get the current page pathname
     const location = useLocation();
 
