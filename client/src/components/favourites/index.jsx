@@ -1,4 +1,5 @@
 import Layout from '../layouts';
+import { setupInterceptors } from '../../utils/interceptor.jsx'
 
 import axios from 'axios';
 
@@ -8,7 +9,6 @@ import { updateLogin } from '../../store/reducers/loginStatus.js'
 
 const Favourites = () => {
 
-    const axiosJWT = axios.create();
     const dispatch = useDispatch();
 
     // const [authenticated, setAuthenticated] = useState(false);
@@ -18,39 +18,49 @@ const Favourites = () => {
 
     const usernameOrEmail = useSelector((state) => state.login.username);
 
-    // refresh access token
-    const refreshToken = async() => {
-        try {
-            await axios.post("/user/refresh", {
-                username: usernameOrEmail
-            })
-            .then(response => {
-                const accessToken = response.data.access_token;
-                localStorage.setItem('access_token', accessToken);
-            })
-            .catch(error => {
-                console.log("Error - can't refresh access token ", error)
-            })
-        } catch (error) {
-            console.log("Unable to refresh token: ", error)
-        }
-    }
+    useEffect(() => {
+        setupInterceptors();
+    }, [])
 
-    // interceptor for refreshing token
-    axiosJWT.interceptors.request.use(
-        async (config) => {
-            console.log("config: ", config)
-            if (config.url ==='/user/login') {  // skip login
-                return config;
-            }
-            // check for expired access token and refresh if it is expired
-            let currentDate = new Date();
-            const decodedToken = jwtDecode(localStorage.getItem('jwt'));
-            if (decodedToken.exp * 1000 < currentDate.getTime()) {
-                refreshToken();
-            }
-        }
-    )
+    useEffect(() => {
+        getFavPlayers();
+        // console.log("authenticated: ", authenticated)
+    }, [loggedIn]); 
+
+
+    // // refresh access token
+    // const refreshToken = async() => {
+    //     try {
+    //         await axios.post("/user/refresh", {
+    //             username: usernameOrEmail
+    //         })
+    //         .then(response => {
+    //             const accessToken = response.data.access_token;
+    //             localStorage.setItem('access_token', accessToken);
+    //         })
+    //         .catch(error => {
+    //             console.log("Error - can't refresh access token ", error)
+    //         })
+    //     } catch (error) {
+    //         console.log("Unable to refresh token: ", error)
+    //     }
+    // }
+
+    // // interceptor for refreshing token
+    // axiosJWT.interceptors.request.use(
+    //     async (config) => {
+    //         console.log("config: ", config)
+    //         if (config.url ==='/user/login') {  // skip login
+    //             return config;
+    //         }
+    //         // check for expired access token and refresh if it is expired
+    //         let currentDate = new Date();
+    //         const decodedToken = jwtDecode(localStorage.getItem('jwt'));
+    //         if (decodedToken.exp * 1000 < currentDate.getTime()) {
+    //             refreshToken();
+    //         }
+    //     }
+    // )
 
     const handleLogin = (loginStatus) => {
         dispatch(updateLogin(loginStatus));
@@ -88,11 +98,6 @@ const Favourites = () => {
             }
         })
     }
-
-    useEffect(() => {
-        getFavPlayers();
-        // console.log("authenticated: ", authenticated)
-    }, [loggedIn]); 
 
 
     // WIP - CRUD operations
