@@ -4,10 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import Select from 'react-select';
 import { components } from 'react-select';
+import React from 'react';
 
 {/* <Select filterOption={createFilter({ignoreAccents: false})}></Select>  */}
 
 const PlayersList = ({ onPlayerSelect }) => {
+    const loggedIn = useSelector((state) => state.login.loggedIn);
+
     const players = useSelector((state) => state.players)
 
     const dispatch = useDispatch();
@@ -26,40 +29,29 @@ const PlayersList = ({ onPlayerSelect }) => {
         // console.log("Player id: ", option.value.playerID)
         onPlayerSelect(option.value.playerID)
     };
-    
-    // const CustomOption = ({ data, selectProps }) => (
-    //     // <div {...innerProps}>
-    //     <div>
-    //       <span>{data.label}</span>
-    //       <button onClick={(e) => selectProps.onButtonClick(data)}>Button</button>
-    //     </div>
-    // );
-    
-    // const CustomSelect = ({ options, onButtonClick}) => (
-    //     <>
-    //     {/* {console.log("...rest: ", {...rest})} */}
-        
-    //     <Select
-    //     //   {...rest}
-    //       options={options}
-    //       components={{ Option: CustomOption }}
-    //       onButtonClick={onButtonClick}
-    //     />
-    //     </>
-    // );
 
-    const handleClick = (event) => {
-        console.log(event)
+    const handleFavPlayer = (stuff) => {
+        console.log(stuff.props.children)
     }
 
-    const CustomButton = ({ children, ...props }) => {
-        return (
-            <>
-                {console.log("Children: ", children)}
-            
-                <button> test</button>
-            </>    
-        )   
+
+    const SelectMenuButton = (props) => {
+        const { children, ...rest } = props;
+
+        const childrenWithButton = React.Children.map(children, (child) => {    // React.Children.map allows mapping over children (haha)
+            const playerName = child
+            // if (React.isValidElement(child)) {
+                return (
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div style={{ flex: '1' }}>{playerName}</div>
+                        <button style={{ marginLeft: '8px' }} disabled={!loggedIn} onClick={() => handleFavPlayer(playerName)}>Add</button>
+                    </div>
+                );
+            // }
+            // return child;
+        }
+    )
+     return <components.MenuList {...rest}>{childrenWithButton}</components.MenuList>;
     }
 
     useEffect(() => {
@@ -90,7 +82,9 @@ const PlayersList = ({ onPlayerSelect }) => {
                         value={selectedOption}
                         onChange={handleSelectedPlayer}
                         options={playersList}
-                        components={{CustomButton}}
+                        // components={{CustomButton: CustomButton}}
+                        components={{ MenuList: SelectMenuButton }}
+
                     />
                 </>
             ) : null}

@@ -11,8 +11,6 @@ import * as AiIcons from 'react-icons/ai';
 
 const Sidebar = () => {
 
-
-
     const dispatch = useDispatch();
     const loggedIn = useSelector((state) => state.login.loggedIn);
     const usernameOrEmail = useSelector((state) => state.login.username);
