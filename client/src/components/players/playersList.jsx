@@ -65,12 +65,18 @@ const PlayersList = ({ onPlayerSelect }) => {
             const res = response.data
             console.log("response: ", res)
             toast.success(`Added ${favPlayer} to favourites!`, {
-                position: "bottom-center",
+                position: "top-center",
                 hideProgressBar: true,
+                theme: 'dark'
             })
         })
         .catch(error => {
             console.log("Error: ", error, response);
+            toast.error(`Encountered error. Sorry!`, {
+                position: "top-center",
+                hideProgressBar: true,
+                theme: 'dark'
+            })
         })
     }
 

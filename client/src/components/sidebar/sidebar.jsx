@@ -8,6 +8,8 @@ import axios from 'axios';
 import { Link, useLocation } from 'react-router-dom';
 import * as FaIcons from 'react-icons/fa';
 import * as AiIcons from 'react-icons/ai';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Sidebar = () => {
 
@@ -59,18 +61,42 @@ const Sidebar = () => {
                     localStorage.setItem('access_token', accessToken);
 
                     setUserOrEmail(userOrEmail)
-
                     handleLogin(true);
                     updateUserOrEmail(userOrEmail)
+
+                    toast.success(`Login successful!`, {
+                        position: "top-center",
+                        hideProgressBar: true,
+                        // closeOnClick: true,
+                        theme: 'dark'
+                    })
                 })
                 .catch(error => {
                     console.log("Error: ", error, response);
+                    toast.error(`Something went wrong. Sorry!`, {
+                        position: "top-center",
+                        hideProgressBar: true,
+                        // closeOnClick: true,
+                        theme: 'dark'
+                    })
                 });
             } else {
                 console.log("Login failed. Response: ", response.data.message)
+                toast.error(`Invalid Credentials`, {
+                    position: "top-center",
+                    hideProgressBar: true,
+                    // closeOnClick: true,
+                    theme: 'dark'
+                })
             }
         }).catch (error => {
             console.log("Error: ", error)
+            toast.error(`Something went wrong. Sorry!`, {
+                position: "top-center",
+                hideProgressBar: true,
+                // closeOnClick: true,
+                theme: 'dark'
+            })
         })
     }
 
@@ -89,17 +115,37 @@ const Sidebar = () => {
         })
         .then(response => {
             if (response.status === 200) {
-                window.location.reload();
-                console.log("Logout successful")
+                toast.success(`Logout successful!`, {
+                    position: "top-center",
+                    hideProgressBar: true,
+                    // closeOnClick: true,
+                    theme: 'dark'
+                })
+                    // window.location.reload();
                 handleLogin(false);
+
+                 // console.log("Logout successful")
+                
             } else {
                 console.log("Logout failed. Response: ", response);
                 console.log("response status: ", response.status)
+                toast.error(`Something went wrong. Sorry!`, {
+                    position: "top-center",
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    theme: 'dark'
+                })
             }
         })
         .catch(error => {
             console.log("Error: ", error);
             handleLogin(false);
+            toast.error(`Something went wrong. Sorry!`, {
+                position: "top-center",
+                hideProgressBar: true,
+                closeOnClick: true,
+                theme: 'dark'
+            })
         })
     }
 
@@ -155,6 +201,7 @@ const Sidebar = () => {
                 }
                 </div>
             </nav>
+            <ToastContainer/>
         </>
     )
 }

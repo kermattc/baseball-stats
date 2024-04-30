@@ -9,6 +9,8 @@ import { Icon } from 'react-icons-kit';
 import { eyeOff } from 'react-icons-kit/feather/eyeOff';
 import { eye } from 'react-icons-kit/feather/eye';
 import { Link } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Register = () => {
 
@@ -17,10 +19,8 @@ const Register = () => {
 
     const usernameOrEmail = useSelector((state) => state.login.username);
 
-    console.log("Log in status: ", loggedIn)
-
     const handleLogin = (loginStatus) => {
-        dispatch(handleLogin(loginStatus));
+        dispatch(updateLogin(loginStatus));
     }
     
     const updateUserOrEmail = (userOrEmail) => {
@@ -46,18 +46,36 @@ const Register = () => {
                 axios.post('/user/getJWT', {
                     username: username
                 }).then(response => {
-                    // console.log("Access token from response: ", response.data.access_token)
-                    const accessToken = response.data.access_token;
-                    localStorage.setItem('access_token', accessToken);
+                    console.log("Response: ", response)
+                    if (response.status === 200) {
+                        const accessToken = response.data.access_token;
+                        localStorage.setItem('access_token', accessToken);
+    
+                        handleLogin(true);
+                        updateUserOrEmail(username)
+                        setRegistered(true);    
 
-                    handleLogin(true);
-                    updateUserOrEmail(username)
+                        toast.success(`Register successful. Welcome, ${username}!`, {
+                            position: "top-center",
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            theme: 'dark'
+                        })
+
+                    }
+                    // console.log("Access token from response: ", response.data.access_token)
+
                 })
                 .catch(error => {
                     console.log("Error: ", error, res);
+                    toast.error(`Error during registration. Sorry!`, {
+                        position: "top-center",
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        theme: 'dark'
+                    })
                 });
 
-                setRegistered(true);
             }
         })
         .catch(error => {
@@ -87,7 +105,6 @@ const Register = () => {
     return (
         <>
             <Layout>
-                {/* <div className="register-form-container"> */}
                 <div>
                     <form className="register-form" onSubmit={onRegisterUser}>
                     <input
@@ -128,6 +145,8 @@ const Register = () => {
                 <Link to="/">Get me outta here!</Link>
                 { registered ? successMessage() : null}
             </Layout>
+            <ToastContainer/>
+
         </>
     )
 }

@@ -19,15 +19,15 @@ import ListDivider from '@mui/joy/ListDivider';
 import { Button, Icon } from 'semantic-ui-react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Favourites = () => {
 
     const dispatch = useDispatch();
 
-    // const [authenticated, setAuthenticated] = useState(false);
     const [username, setUsername] = useState('');
     const [favPlayers, setFavPlayers] = useState([]);
-    const [confirmDelete, setConfirmDelete] = useState(false);
     const loggedIn = useSelector((state) => state.login.loggedIn);
 
     const usernameOrEmail = useSelector((state) => state.login.username);
@@ -38,32 +38,11 @@ const Favourites = () => {
 
     useEffect(() => {
         getFavPlayers();
-        // console.log("authenticated: ", authenticated)
     }, [loggedIn]); 
 
     const handleLogin = (loginStatus) => {
         dispatch(updateLogin(loginStatus));
     }
-
-    // useEffect(() => {
-    //     document.body.addEventListener('click', (event) => {
-    //         // console.log("Clicked on: ", event.target)
-    //         // console.log("Clicked class: ", event.target.classList)
-
-    //         // console.log("Clicked id: ", event.target.id)
-    //         if (!event.target.classList.contains("trash") && !event.target.classList.contains("delete-reveal")) {
-
-    //             console.log("Did not click on the button")
-    //             setConfirmDelete(false)
-    //         }
-    //         // console.log("Click detected that's not on the button - confirmDelete: ", confirmDelete)
-    //     })
-    // }, [])
-
-    // const handleDelete = () => {
-    //     console.log("handle delete")
-    //     setConfirmDelete(true);
-    // };
 
     const handleButtonClick = async(player, mode) => {
         console.log("Function got called. Player: ", player, " mode: ", mode)
@@ -102,10 +81,23 @@ const Favourites = () => {
             // const res = response.data
             console.log("Successfully removed player: ", response)
             getFavPlayers();
+            
+            toast.success(`Removed ${player} from favourites!`, {
+                position: "top-center",
+                hideProgressBar: true,
+                theme: 'dark'
+            })
+
             handleButtonClick(player, 'cancellation')
+
         })
         .catch(error => {
             console.log("Error: ", error);
+            toast.error(`Error while removing. Sorry!`, {
+                position: "top-center",
+                hideProgressBar: true,
+                theme: 'dark'
+            })
         })
     }
 
@@ -147,15 +139,13 @@ const Favourites = () => {
                                             Some information about this player. TBD
                                         </Typography>
                                     </ListItemContent>
-                                    {/* <Button icon>
-                                        <Icon name='arrows alternate vertical'/>
-                                    </Button> */}
+
                                     <div className="delete-button-container">
                                         <Button id={`${player}-delete`} onClick={() => handleButtonClick(player, 'confirmation')}>
                                             <FontAwesomeIcon icon={faTrash} />                  
                                         </Button>
                                         <Button id={`${player}-delete-confirm`} onClick={() => removeFavPlayer(player)} style={{ display: 'none' }} color='red'>
-                                            Delete fo' realsies?
+                                            Delete?
                                         </Button>
                                         <Button id={`${player}-delete-cancel`} onClick={() => handleButtonClick(player, 'cancellation')} style={{ display: 'none' }}>
                                             <FontAwesomeIcon icon={faXmark}/>
@@ -185,7 +175,7 @@ const Favourites = () => {
         })
     }
 
-    // WIP - CRUD operations
+    // CRUD operations
     // here the user can make changes to their favourite players
     // Add new ones, update and delete
     return (
@@ -196,21 +186,26 @@ const Favourites = () => {
                         favPlayers.length > 0 ?
                         <>
                             <Box id="fav-players-box" sx={{ width: screen.width * 0.8 }}>
-                                <Typography
-                                    id="favPlayers-title"
-                                    level="body-xl"
-                                    sx={{ letterSpacing: '0.15rem' }}
-                                >
-                                    Welcome {username}, here are your favourite players.
-                                </Typography>
+                                <h1 className="ui header">Welcome {username}, here are your favourite players.</h1>
                                 {favPlayers}
                             </Box>
                         </> 
                         :
-                        <h2>You have no favourites. Add some bitch!</h2>
-                    : <h2>Error 403 - Are you logged in?</h2>}
-                </Layout>
+                        <>
+                            <Box id="fav-players-box" sx={{ width: screen.width * 0.8 }}>
+                                <h1 className="ui header">Welcome to the favourites page! You can view your favourite players here once you add them.</h1>
+                            </Box>
+                        </>
+                    :         
+                    <>                    
+                        <Box id="fav-players-box" sx={{ width: screen.width * 0.8 }}>
+                            <h1 className="ui header">Welcome to the favourites page! You need to login in order to save your favourite players.</h1>
+                        </Box>
+                    </>
+                }
+                </Layout>    
             </div>
+            <ToastContainer/>
         </>
     )
 }

@@ -136,10 +136,11 @@ router.post('/register', (req, res) => {
                     })
                     // save if successful
                     newUser.save().then(result => {
-                        res.json({
-                            status: "SUCCESS",
-                            message: "Register successful",
-                            data: result
+                        res.status(200)
+                            .json({
+                                status: "SUCCESS",
+                                message: "Register successful",
+                                data: result
                         })
                     })
                     .catch(err => {
