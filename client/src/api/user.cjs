@@ -13,13 +13,18 @@ const authorization = (req, res, next) => {
     const accessToken = req.headers.authorization.split(" ")[1];
     const refreshToken = req.cookies.refresh_token;
 
-    if (!accessToken || !refreshToken) {
-        return res.status(401).send('Access denied. No token provided')
+    // console.log("Access token: ", accessToken)
+    // console.log("Refresh token: ", refreshToken)
+
+    if (!refreshToken) {
+        return res.status(401).send('Access denied. No refresh token provided')
     }
 
     // verify access token
     try {
         const decoded = jwt.verify(accessToken, process.env.VITE_JWT_SECRET_ACCESS)
+        console.log("MAde it here 2")
+
         console.log("Decoded access token: ", decoded)
 
         req.username = decoded.username;
@@ -27,22 +32,27 @@ const authorization = (req, res, next) => {
     } catch (error) {
         // check that the refresh token exists, then verify it
         try {
+            console.log("MAde it here 3")
+
+            console.log("Refresh tokens at check: ", refreshTokens)
             // console.log("Access token expired, now checking refresh token")
             if (!refreshTokens.includes(refreshToken)) {
-                return res.status(400).send("Refresh token invalid")
+                return res.status(400).json({message: "Refresh token invalid"})
             }
+            console.log("MAde it here 4")
+
             const decoded = jwt.verify(refreshToken, process.env.VITE_JWT_SECRET_REFRESH)
             // console.log("refresh decoded: ", decoded)
             req.username = decoded.username; // attach username to req body. might delete this later
 
-            // console.log("Refresh token validated. Username: ", req.username)
+            console.log("Refresh token validated. Username: ", req.username)
             next();
 
             } catch (error) {
                 return res.status(400).send('Refresh token expired')
             }
         // console.log("MAde it here')")
-        return (res.status(401).send("Access token expired"))
+        // return (res.status(401).send("Access token expired"))
     }
 }
 
@@ -72,6 +82,8 @@ router.post('/getJWT', (req, res) => {
 
     // append to list of refresh tokens
     refreshTokens.push(refreshToken)
+
+    console.log("Refresh tokens at creation: ", refreshTokens)
 
     // assign refresh token in http-opnly cookie. max age will be 1 hour
     res
@@ -241,16 +253,74 @@ router.post('/logout', authorization, (req, res) => {
 
 // wip - get user's favourite players from db, send to front end
 router.get('/getFavourites', authorization, (req, res) => {
+    console.log("Refresh tokens still here? ", refreshTokens)
     console.log("Send this user to mongodb and get the daters: ", req.username)
 
-    User.find({$or: [
-        {username: req.username}
-    ]})
-    .then ( data => {
-        console.log("data: ", data)
+    // res.status(200).json({username: req.username})
+    User.find({
+        username: req.username
     })
-    res.status(200).json({message: "Debugging /getFavourites - Authentication successful", username: req.username})
+    .then ( data => {
+        const user = data[0]
+        console.log("data: ", data)
+        console.log("fav players? ", user.favPlayers)
+        res
+            .status(200)
+            .json({
+                status: "SUCCESS",
+                favPlayers: user.favPlayers,
+                username: req.username
+            }
+        )
+    })
+    .catch(err => {
+        console.log("Err: ", err)
+        res.status(500).json({ status: "FAILED", message: "Internal server error" });
+    });
+})
 
+router.post('/addFavourite', authorization, (req, res) => {
+    const username = req.username
+    const favPlayer = req.body.favPlayer
+    console.log("Add this player to favourites: ", favPlayer)
+
+    User.find({
+        username: username
+    })
+    .then ( data => {
+        const user = data[0]
+
+        User.updateOne(
+            { _id: user._id},
+            { $push: {favPlayers: favPlayer}}
+        )
+        .then(res.status(200).json({status: "SUCCESS", message: "Added player to favourites"}))
+        .catch(error => 
+            res.status(500).json({status: "FAILIED", message: "Encountered error while adding player to favourites."})
+        )
+    })
+})
+
+router.post('/removeFavourite', authorization, (req, res) => {
+    const username = req.username
+    const player = req.body.player
+    console.log("Remove this player from favourites: ", player)
+
+    User.find({
+        username: username
+    })
+    .then ( data => {
+        const user = data[0]
+
+        User.updateOne(
+            { _id: user._id},
+            { $pull: {favPlayers: player}}
+        )
+        .then(res.status(200).json({status: "SUCCESS", message: "Removed player from favourites"}))
+        .catch(error => 
+            res.status(500).json({status: "FAILIED", message: "Encountered error while removing player from favourites."})
+        )
+    })
 })
 
 // refresh the access token if the refresh token is still valid
@@ -286,7 +356,7 @@ router.post('/refresh', (req, res) => {
         const newAccessToken = jwt.sign(
             data,
             process.env.VITE_JWT_SECRET_ACCESS,
-            {expiresIn: '10m'}
+            {expiresIn: '15s'}
         )
         
         // create new refresh token for more security
@@ -298,6 +368,7 @@ router.post('/refresh', (req, res) => {
 
         refreshTokens.push(newRefreshToken) // update existing valid refresh tokens
 
+        console.log("Finished refreshing. New refresh tokens list: ", refreshTokens)
         res
             .status(200)
             .cookie("refresh_token", newRefreshToken, {

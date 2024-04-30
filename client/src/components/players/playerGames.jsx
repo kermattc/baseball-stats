@@ -78,7 +78,7 @@ const PlayerGames = ( {playerID, getPlayerStats, onGameSelect} ) => {
                     <div style={{maxWidth: screen.width, overflowX: 'scroll'}}>
                         <ListGroup horizontal='md'> 
                         {playerGames.map((game) => (
-                            <ListGroup.Item key={game.gameID} action variant='light' className='mx-auto' onClick={() => handleToggle(game.gameID)} active={checkedGames[game.gameID]}> 
+                            <ListGroup.Item key={game.gameID} action variant='light' className='mx-auto' onClick={() => handleToggle(game.gameID)} active={checkedGames[game.gameID]} style={{zIndex:'0'}}> 
                                 {game.gameLabel} 
                                 {/* <ToggleButton
                                     className="mb-2"

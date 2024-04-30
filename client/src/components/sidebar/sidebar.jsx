@@ -1,21 +1,24 @@
 import { updateLogin, updateUsername } from '../../store/reducers/loginStatus.js'
+import { setupInterceptors } from '../../utils/interceptor.jsx'
 
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { jwtDecode } from "jwt-decode";
 
 import { Link, useLocation } from 'react-router-dom';
 import * as FaIcons from 'react-icons/fa';
 import * as AiIcons from 'react-icons/ai';
 
 const Sidebar = () => {
-    const axiosJWT = axios.create();
 
     const dispatch = useDispatch();
     const loggedIn = useSelector((state) => state.login.loggedIn);
     const usernameOrEmail = useSelector((state) => state.login.username);
 
+    useEffect(() => {
+        setupInterceptors(usernameOrEmail);
+    }, [usernameOrEmail])
+    
     // get the current page pathname
     const location = useLocation();
 
@@ -23,43 +26,6 @@ const Sidebar = () => {
     
     const [userOrEmail, setUserOrEmail] = useState(''); // not sure about this yet
     const [password, setPassword] = useState('');
-
-    // refresh access token
-    const refreshToken = async() => {
-        try {
-            await axios.post("/user/refresh", {
-                username: usernameOrEmail
-            })
-            .then(response => {
-                const accessToken = response.data.access_token;
-                localStorage.setItem('access_token', accessToken);
-            })
-            .catch(error => {
-                console.log("Error - can't refresh access token ", error)
-                handleLogin(false)
-            })
-        } catch (error) {
-            console.log("Unable to refresh token: ", error)
-            handleLogin(false)
-        }
-    }
-
-    // interceptor for refreshing token
-    axiosJWT.interceptors.request.use(
-        async (config) => {
-            console.log("config: ", config)
-            if (config.url ==='/user/login') {  // skip login
-                return config;
-            }
-            // check for expired access token and refresh if it is expired
-            let currentDate = new Date();
-            const decodedToken = jwtDecode(localStorage.getItem('jwt'));
-            if (decodedToken.exp * 1000 < currentDate.getTime()) {
-                await refreshToken();
-            }
-            return config;
-        }
-    )
 
     // toggle boolean from redux store
     const handleLogin = (loginStatus) => {

@@ -51,16 +51,6 @@ const Home = () => {
         }
     }, [selectedGames])
 
-
-    const onLogin = () => {
-        axios.get('/api/login', {
-            message: 'logging in user'
-        })
-        .then( response => {
-            console.log(response.data);
-        })
-        .catch(err => console.log('axios post error: ', err))
-    }
     
     return (
         <>
