@@ -1,3 +1,7 @@
+Install packages in root directory and in client directory
+- (in root directory) npm install
+- (cd into client directory) npm install
+
 Run web app and server:
 - npm run dev
 

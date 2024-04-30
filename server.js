@@ -1,5 +1,4 @@
 const UserRouter = require('./client/src/api/user.cjs');
-const JWTRouter = require('./client/src/api/jwt.cjs');
 
 const cookieParser = require('cookie-parser');
 const express = require('express');
@@ -17,7 +16,6 @@ console.log("Server's running");
 
 // use the 'user' api defined in /api/user.cjs
 app.use('/user', UserRouter)
-app.use('/jwt', JWTRouter)
 
 const port = process.env.PORT || 3001
 app.listen(port);

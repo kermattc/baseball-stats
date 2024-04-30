@@ -5,13 +5,15 @@ import Favourites from './components/favourites';
 
 const Router = () => {
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path='/' element={<Home/>}/>
-                <Route path='/register' element={<Register/>}/>
-                <Route path='/favourites' element={<Favourites/>}/>
-            </Routes>
-        </BrowserRouter>
+        <>
+            <BrowserRouter>
+                <Routes>
+                    <Route path='/' element={<Home/>}/>
+                    <Route path='/register' element={<Register/>}/>
+                    <Route path='/favourites' element={<Favourites/>}/>
+                </Routes>
+            </BrowserRouter>
+        </>
     )
 }
 

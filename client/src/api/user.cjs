@@ -13,9 +13,6 @@ const authorization = (req, res, next) => {
     const accessToken = req.headers.authorization.split(" ")[1];
     const refreshToken = req.cookies.refresh_token;
 
-    // console.log("Access token: ", accessToken)
-    // console.log("Refresh token: ", refreshToken)
-
     if (!refreshToken) {
         return res.status(401).send('Access denied. No refresh token provided')
     }
@@ -23,26 +20,18 @@ const authorization = (req, res, next) => {
     // verify access token
     try {
         const decoded = jwt.verify(accessToken, process.env.VITE_JWT_SECRET_ACCESS)
-        console.log("MAde it here 2")
-
-        console.log("Decoded access token: ", decoded)
 
         req.username = decoded.username;
         next();
     } catch (error) {
         // check that the refresh token exists, then verify it
         try {
-            console.log("MAde it here 3")
-
-            console.log("Refresh tokens at check: ", refreshTokens)
-            // console.log("Access token expired, now checking refresh token")
             if (!refreshTokens.includes(refreshToken)) {
                 return res.status(400).json({message: "Refresh token invalid"})
             }
             console.log("MAde it here 4")
 
             const decoded = jwt.verify(refreshToken, process.env.VITE_JWT_SECRET_REFRESH)
-            // console.log("refresh decoded: ", decoded)
             req.username = decoded.username; // attach username to req body. might delete this later
 
             console.log("Refresh token validated. Username: ", req.username)
@@ -51,8 +40,6 @@ const authorization = (req, res, next) => {
             } catch (error) {
                 return res.status(400).send('Refresh token expired')
             }
-        // console.log("MAde it here')")
-        // return (res.status(401).send("Access token expired"))
     }
 }
 
@@ -241,7 +228,7 @@ router.post('/login', (req, res) => {
                 })
             }
         )
-    } 
+    }
 })
 
 // remove the refresh token from the list to 'invalidate' it
@@ -251,7 +238,7 @@ router.post('/logout', authorization, (req, res) => {
     res.status(200).json("Successfully logged out")
 })
 
-// wip - get user's favourite players from db, send to front end
+// get the user's favourite baseball players and send them back as a list
 router.get('/getFavourites', authorization, (req, res) => {
     console.log("Refresh tokens still here? ", refreshTokens)
     console.log("Send this user to mongodb and get the daters: ", req.username)
@@ -279,6 +266,7 @@ router.get('/getFavourites', authorization, (req, res) => {
     });
 })
 
+// get a player name and add it to the list of the user's favourite players in the db
 router.post('/addFavourite', authorization, (req, res) => {
     const username = req.username
     const favPlayer = req.body.favPlayer
@@ -295,12 +283,14 @@ router.post('/addFavourite', authorization, (req, res) => {
             { $push: {favPlayers: favPlayer}}
         )
         .then(res.status(200).json({status: "SUCCESS", message: "Added player to favourites"}))
-        .catch(error => 
+        .catch( error =>{
+            console.log("error: ", error)
             res.status(500).json({status: "FAILIED", message: "Encountered error while adding player to favourites."})
-        )
+        })
     })
 })
 
+// get a player name and remove it from the user's list of favourite players in the db
 router.post('/removeFavourite', authorization, (req, res) => {
     const username = req.username
     const player = req.body.player
@@ -317,9 +307,10 @@ router.post('/removeFavourite', authorization, (req, res) => {
             { $pull: {favPlayers: player}}
         )
         .then(res.status(200).json({status: "SUCCESS", message: "Removed player from favourites"}))
-        .catch(error => 
+        .catch( error => {
+            console.log("error: ", error)
             res.status(500).json({status: "FAILIED", message: "Encountered error while removing player from favourites."})
-        )
+        })
     })
 })
 

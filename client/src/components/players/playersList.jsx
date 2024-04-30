@@ -8,8 +8,8 @@ import React from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
-
-{/* <Select filterOption={createFilter({ignoreAccents: false})}></Select>  */}
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const PlayersList = ({ onPlayerSelect }) => {
     const loggedIn = useSelector((state) => state.login.loggedIn);
@@ -27,59 +27,7 @@ const PlayersList = ({ onPlayerSelect }) => {
         return newData;
     }
 
-    const handleSelectedPlayer = (option) => {
-        setSelectedOption(option);
-        // console.log(`Option selected:`, option);
-        // console.log("Player id: ", option.value.playerID)
-        onPlayerSelect(option.value.playerID)
-    };
-
-    const handleFavPlayer = (stuff) => {
-        // console.log(stuff.props.children)
-        const favPlayer = stuff.props.children
-        const token = localStorage.getItem('access_token');
-
-        axios.post('/user/addFavourite', {
-            username: usernameOrEmail,
-            favPlayer: favPlayer
-        }, {
-            headers:{
-                'Authorization': `Bearer ${token}`
-            }
-        })
-        .then(response => {
-            const res = response.data
-            console.log("response: ", res)
-        })
-        .catch(error => {
-            console.log("Error: ", error, response);
-        })
-    }
-
-
-    const SelectMenuButton = (props) => {
-        const { children, ...rest } = props;
-
-        const childrenWithButton = React.Children.map(children, (child) => {    // React.Children.map allows mapping over children (haha)
-            const playerName = child
-            // if (React.isValidElement(child)) {
-                return (
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <div style={{ flex: '1' }}>{playerName}</div>
-                        {/* <button style={{ marginLeft: '8px' }} disabled={!loggedIn} onClick={() => handleFavPlayer(playerName)}>Add</button> */}
-                        <Button style={{ marginLeft: '8px' }} disabled={!loggedIn} onClick={() => handleFavPlayer(playerName)}>
-                            {/* <FontAwesomeIcon icon={faXmark}/> */}
-                            <FontAwesomeIcon icon={faHeart} />                      
-                        </Button>
-                    </div>
-                );
-            // }
-            // return child;
-        }
-    )
-     return <components.MenuList {...rest}>{childrenWithButton}</components.MenuList>;
-    }
-
+    // get list of players from redux store and sort them alphabetically
     useEffect(() => {
         dispatch(fetchPlayersList())
         .then((response) => {
@@ -94,26 +42,71 @@ const PlayersList = ({ onPlayerSelect }) => {
         })
     }, []);
 
+    // update variables when a player is clicked on
+    const handleSelectedPlayer = (option) => {
+        setSelectedOption(option);
+        onPlayerSelect(option.value.playerID)
+    };
+
+    // add new player to list of favourites
+    const handleFavPlayer = (stuff) => {
+        const favPlayer = stuff.props.children
+        const token = localStorage.getItem('access_token');
+
+        axios.post('/user/addFavourite', {
+            username: usernameOrEmail,
+            favPlayer: favPlayer
+        }, {
+            headers:{
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => {
+            const res = response.data
+            console.log("response: ", res)
+            toast.success(`Added ${favPlayer} to favourites!`, {
+                position: "bottom-center",
+                hideProgressBar: true,
+            })
+        })
+        .catch(error => {
+            console.log("Error: ", error, response);
+        })
+    }
+
+    // custom component, include a button to each list item for the react-select list
+    const SelectMenuButton = (props) => {
+        const { children, ...rest } = props;
+
+        const childrenWithButton = React.Children.map(children, (child) => {    // React.Children.map allows mapping over children (haha)
+        const playerName = child
+            return (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ flex: '1' }}>{playerName}</div>
+                    <Button style={{ marginLeft: '8px' }} disabled={!loggedIn} onClick={() => handleFavPlayer(playerName)}>
+                        <FontAwesomeIcon icon={faHeart} />                      
+                    </Button>
+                </div>
+            );
+        }
+    )
+        return <components.MenuList {...rest}>{childrenWithButton}</components.MenuList>;
+    }
 
     return (
         <>
             {!players.loading ? ( 
                 <>
                 <h5>Select a player</h5>
-                    {/* <CustomSelect
-                        options={playersList}
-                        onButtonClick={(e) => handleClick(e)}
-                    /> */}
                     <Select
                         value={selectedOption}
                         onChange={handleSelectedPlayer}
                         options={playersList}
-                        // components={{CustomButton: CustomButton}}
                         components={{ MenuList: SelectMenuButton }}
-
                     />
                 </>
             ) : null}
+            <ToastContainer/>
         </>
     );
 }

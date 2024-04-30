@@ -28,7 +28,6 @@ export const setupInterceptors = (usernameOrEmail) => {
 
     axiosJWT.interceptors.request.use(
         async (config) => {
-            console.log("config: ", config)
             if (config.url ==='/user/login') {  // skip login
                 return config;
             }
