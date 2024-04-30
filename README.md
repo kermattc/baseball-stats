@@ -2,7 +2,6 @@ Run web app and server:
 - npm run dev
 
 Flask server for debugging (flask required):
-- cd into client
 - pip3 install -r flask-server/requirements.txt
 - python3 client/flask-server/server.py
 
