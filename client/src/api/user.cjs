@@ -279,6 +279,50 @@ router.get('/getFavourites', authorization, (req, res) => {
     });
 })
 
+router.post('/addFavourite', authorization, (req, res) => {
+    const username = req.username
+    const favPlayer = req.body.favPlayer
+    console.log("Add this player to favourites: ", favPlayer)
+
+    User.find({
+        username: username
+    })
+    .then ( data => {
+        const user = data[0]
+
+        User.updateOne(
+            { _id: user._id},
+            { $push: {favPlayers: favPlayer}}
+        )
+        .then(res.status(200).json({status: "SUCCESS", message: "Added player to favourites"}))
+        .catch(error => 
+            res.status(500).json({status: "FAILIED", message: "Encountered error while adding player to favourites."})
+        )
+    })
+})
+
+router.post('/removeFavourite', authorization, (req, res) => {
+    const username = req.username
+    const player = req.body.player
+    console.log("Remove this player from favourites: ", player)
+
+    User.find({
+        username: username
+    })
+    .then ( data => {
+        const user = data[0]
+
+        User.updateOne(
+            { _id: user._id},
+            { $pull: {favPlayers: player}}
+        )
+        .then(res.status(200).json({status: "SUCCESS", message: "Removed player from favourites"}))
+        .catch(error => 
+            res.status(500).json({status: "FAILIED", message: "Encountered error while removing player from favourites."})
+        )
+    })
+})
+
 // refresh the access token if the refresh token is still valid
 router.post('/refresh', (req, res) => {
     console.log("Made it to refresh")

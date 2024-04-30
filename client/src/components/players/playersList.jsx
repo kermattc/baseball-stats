@@ -5,11 +5,15 @@ import { useEffect, useState } from 'react';
 import Select from 'react-select';
 import { components } from 'react-select';
 import React from 'react';
+import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHeart } from "@fortawesome/free-solid-svg-icons";
 
 {/* <Select filterOption={createFilter({ignoreAccents: false})}></Select>  */}
 
 const PlayersList = ({ onPlayerSelect }) => {
     const loggedIn = useSelector((state) => state.login.loggedIn);
+    const usernameOrEmail = useSelector((state) => state.login.username);
 
     const players = useSelector((state) => state.players)
 
@@ -31,7 +35,25 @@ const PlayersList = ({ onPlayerSelect }) => {
     };
 
     const handleFavPlayer = (stuff) => {
-        console.log(stuff.props.children)
+        // console.log(stuff.props.children)
+        const favPlayer = stuff.props.children
+        const token = localStorage.getItem('access_token');
+
+        axios.post('/user/addFavourite', {
+            username: usernameOrEmail,
+            favPlayer: favPlayer
+        }, {
+            headers:{
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => {
+            const res = response.data
+            console.log("response: ", res)
+        })
+        .catch(error => {
+            console.log("Error: ", error, response);
+        })
     }
 
 
@@ -44,7 +66,11 @@ const PlayersList = ({ onPlayerSelect }) => {
                 return (
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <div style={{ flex: '1' }}>{playerName}</div>
-                        <button style={{ marginLeft: '8px' }} disabled={!loggedIn} onClick={() => handleFavPlayer(playerName)}>Add</button>
+                        {/* <button style={{ marginLeft: '8px' }} disabled={!loggedIn} onClick={() => handleFavPlayer(playerName)}>Add</button> */}
+                        <Button style={{ marginLeft: '8px' }} disabled={!loggedIn} onClick={() => handleFavPlayer(playerName)}>
+                            {/* <FontAwesomeIcon icon={faXmark}/> */}
+                            <FontAwesomeIcon icon={faHeart} />                      
+                        </Button>
                     </div>
                 );
             // }
