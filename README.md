@@ -1,3 +1,8 @@
+MERN Stack side project
+- MongoDB for storing user information (along with list of favourite players)
+- Node.js and Express.js for the backend
+- React.js and Redux for the frontend
+
 Install packages:
 - (in root directory) - npm install
 - (in client directory) - npm install
