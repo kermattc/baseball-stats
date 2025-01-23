@@ -43,7 +43,7 @@ import axios from 'axios';
 //                 url: option.url + '/getMLBGamesForPlayer',
 //                 params: {playerID: selectedPlayerID},
 //                 headers: {
-//                     'X-RapidAPI-Key': '01637a011cmshbae963a49297aa1p15a0e8jsn6bd4b4d392dd',
+//                     'X-RapidAPI-Key': import.meta.env.VITE_API_KEY,
 //                     'X-RapidAPI-Host': 'tank01-mlb-live-in-game-real-time-statistics.p.rapidapi.com'
 //                   }
 //             }
